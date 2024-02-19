@@ -1,0 +1,4 @@
+rootProject.name = 'WiseWordsScanner'
+include 'NoticeBoardApi'
+include 'ServiceDiscovery'
+
