@@ -48,7 +48,7 @@ class CommentServiceTest {
         // given
         SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
         SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser, "title", "testPostContent")).block();
 
         // when
         Mono<Comment> createComment = commentService.createComment(new Comment(savedUser, savedPost, "testCommentContent"));
@@ -65,7 +65,7 @@ class CommentServiceTest {
     void Should_returnComment_When_givenAuthorIdOrPostId() {
         // given
         SiteUser savedUser = userRepository.save(new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com")).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser, "title", "testPostContent")).block();
 
         // when
         Flux<Comment> commentFlux = Flux.range(1, 3).flatMap(index -> commentService.createComment(new Comment(savedUser, savedPost, "content " + index)));
@@ -100,7 +100,7 @@ class CommentServiceTest {
         SiteUser user2 = new SiteUser("testName2", "testUserId2", "testPassword2", "testEmail2@gamil.com");
         SiteUser savedUser1 = userRepository.save(user1).block();
         SiteUser savedUser2 = userRepository.save(user2).block();
-        Post savedPost = postRepository.save(new Post(savedUser1, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser1, "title", "testPostContent")).block();
 
         // when
         Flux<Comment> comment = commentService.createComment(new Comment(savedUser1, savedPost, "testContent1"))
@@ -118,7 +118,7 @@ class CommentServiceTest {
         // given
         SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
         SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser, "title", "testPostContent")).block();
 
         // when
         Mono<Void> deleteComment = commentService.createComment(new Comment(savedUser, savedPost, "testCommentContent"))
