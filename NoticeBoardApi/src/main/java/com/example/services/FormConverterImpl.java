@@ -25,7 +25,7 @@ public class FormConverterImpl implements FormConverter {
     @Override
     public Mono<Post> toPost(PostForm postForm) {
         return userRepository.findById(postForm.getAuthorId())
-                .map(user -> new Post(user, postForm.getContent()));
+                .map(user -> new Post(user, postForm.getTitle(), postForm.getContent()));
     }
 
     @Override
