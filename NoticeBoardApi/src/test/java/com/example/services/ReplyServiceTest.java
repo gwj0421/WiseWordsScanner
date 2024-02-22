@@ -52,7 +52,7 @@ class ReplyServiceTest {
         // given
         SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
         SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser, "title","testPostContent")).block();
         Comment savedComment = commentRepository.save(new Comment(savedUser, savedPost, "testCommentContent")).block();
 
         // when
@@ -69,7 +69,7 @@ class ReplyServiceTest {
         // given
         SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
         SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser, "title","testPostContent")).block();
         Comment savedComment = commentRepository.save(new Comment(savedUser, savedPost, "testCommentContent")).block();
 
         // when
@@ -92,7 +92,7 @@ class ReplyServiceTest {
         // given
         SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
         SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "testPostContent")).block();
+        Post savedPost = postRepository.save(new Post(savedUser, "title","testPostContent")).block();
         Comment savedComment = commentRepository.save(new Comment(savedUser, savedPost, "testCommentContent")).block();
 
         // when
