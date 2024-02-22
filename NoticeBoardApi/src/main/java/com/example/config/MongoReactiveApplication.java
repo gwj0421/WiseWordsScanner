@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @EnableReactiveMongoRepositories(basePackages = "com.example.repository")
 @EnableReactiveMongoAuditing
 public class MongoReactiveApplication extends AbstractReactiveMongoConfiguration {
-    @Value("spring.data.mongodb.uri")
+    @Value("${spring.data.mongodb.uri}")
     private String mongoUri;
 
     @Override
