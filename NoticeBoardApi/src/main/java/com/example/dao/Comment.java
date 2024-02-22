@@ -1,8 +1,10 @@
 package com.example.dao;
 
+import com.example.dto.DateInfo;
 import com.example.dto.Recommendable;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Document(collection = "Comment")
 @Getter
 public class Comment extends DateInfo implements Recommendable {
     @Id
