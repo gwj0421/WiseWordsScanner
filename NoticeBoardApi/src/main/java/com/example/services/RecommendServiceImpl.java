@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendServiceImpl implements RecommendService {
-    private static final String RECOMMEND_KEY = "recommend";
-    private static final String UN_RECOMMEND_KEY = "unRecommend";
+    public static final String RECOMMEND_KEY = "recommend";
+    public static final String UN_RECOMMEND_KEY = "unRecommend";
     private final RecommendationRepository recommendationRepository;
     @Override
     public Mono<Void> recommend(ReactiveMongoRepository<Recommendable,String> targetRepository, TargetType targetType, String targetId, String recommenderId, boolean userRecommend) {
