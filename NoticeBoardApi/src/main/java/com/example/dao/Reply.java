@@ -1,5 +1,6 @@
 package com.example.dao;
 
+import com.example.dto.DateInfo;
 import com.example.dto.Recommendable;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Document(collection = "Reply")
+@Document(collection = "reply")
 @Getter
 public class Reply extends DateInfo implements Recommendable {
     @Id

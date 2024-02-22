@@ -1,10 +1,11 @@
 package com.example.dao;
 
+import com.example.dto.DateInfo;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "SiteUser")
+@Document(collection = "siteUser")
 @Getter
 public class SiteUser extends DateInfo {
     @Id
