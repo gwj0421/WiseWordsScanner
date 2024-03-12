@@ -26,8 +26,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Mono<Comment> createComment(CommentForm commentForm) {
-        return formConverter.toComment(commentForm)
-                .flatMap(commentRepository::save);
+        return Mono.empty();
     }
 
     @Override

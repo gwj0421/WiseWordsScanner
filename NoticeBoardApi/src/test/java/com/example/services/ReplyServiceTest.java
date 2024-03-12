@@ -1,14 +1,13 @@
 package com.example.services;
 
 import com.example.config.ServiceConfig;
+import com.example.config.WebClientConfig;
 import com.example.dao.Comment;
 import com.example.dao.Post;
 import com.example.dao.Reply;
-import com.example.dao.SiteUser;
 import com.example.repository.CommentRepository;
 import com.example.repository.PostRepository;
 import com.example.repository.ReplyRepository;
-import com.example.repository.SiteUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,15 +23,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @DataMongoTest
-@Import(ServiceConfig.class)
+@Import({ServiceConfig.class, WebClientConfig.class})
 @Slf4j
 class ReplyServiceTest {
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
     private ReplyRepository replyRepository;
-    @Autowired
-    private SiteUserRepository userRepository;
     @Autowired
     private PostRepository postRepository;
     @Autowired
@@ -42,7 +39,6 @@ class ReplyServiceTest {
     @AfterEach
     void setUpAndTearDown() {
         postRepository.deleteAll().block();
-        userRepository.deleteAll().block();
         commentRepository.deleteAll().block();
         replyRepository.deleteAll().block();
     }
@@ -50,13 +46,11 @@ class ReplyServiceTest {
     @Test
     void Should_saveReply_When_givenCommentInfo() {
         // given
-        SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
-        SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "title","testPostContent")).block();
-        Comment savedComment = commentRepository.save(new Comment(savedUser, savedPost, "testCommentContent")).block();
+        Post savedPost = postRepository.save(new Post("testAuthorId", "testAuthorUserId","title","testPostContent")).block();
+        Comment savedComment = commentRepository.save(new Comment(savedPost,"testAuthorId","testAuthorUserId", "testCommentContent")).block();
 
         // when
-        Mono<Reply> createReply = replyService.createReply(new Reply(savedUser,savedComment, "testReplyContent"));
+        Mono<Reply> createReply = replyService.createReply(new Reply(savedComment,"testAuthorId","testAuthorUserId", "testReplyContent"));
 
         // then
         StepVerifier.create(createReply)
@@ -67,13 +61,12 @@ class ReplyServiceTest {
     @Test
     void Should_returnComments_When_givenCommentInfos() {
         // given
-        SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
-        SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "title","testPostContent")).block();
-        Comment savedComment = commentRepository.save(new Comment(savedUser, savedPost, "testCommentContent")).block();
+        Post savedPost = postRepository.save(new Post("testAuthorId", "testAuthorUserId","title","testPostContent")).block();
+        Comment savedComment = commentRepository.save(new Comment(savedPost, "testAuthorId", "testAuthorUserId","testCommentContent")).block();
 
         // when
-        Flux<Reply> createReply = Flux.range(1, 3).flatMap(index -> replyService.createReply(new Reply(savedUser, savedComment, "testReplyContent " + index)));
+        Flux<Reply> createReply = Flux.range(1, 3).flatMap(index ->
+                replyService.createReply(new Reply(savedComment,"testAuthorId","testAuthorUserId", "testReplyContent " + index)));
         Set<String> replies = new HashSet<>();
         StepVerifier.create(createReply)
                 .thenConsumeWhile(reply -> {
@@ -90,13 +83,11 @@ class ReplyServiceTest {
     @Test
     void Should_deleteReply_When_givenReplyId() {
         // given
-        SiteUser user = new SiteUser("testName", "testUserId", "testPassword", "testEmail@gamil.com");
-        SiteUser savedUser = userRepository.save(user).block();
-        Post savedPost = postRepository.save(new Post(savedUser, "title","testPostContent")).block();
-        Comment savedComment = commentRepository.save(new Comment(savedUser, savedPost, "testCommentContent")).block();
+        Post savedPost = postRepository.save(new Post("testAuthorId", "testAuthorUserId","title","testPostContent")).block();
+        Comment savedComment = commentRepository.save(new Comment(savedPost,"testAuthorId", "testAuthorUserId", "testCommentContent")).block();
 
         // when
-        Mono<Void> deleteReply = replyService.createReply(new Reply(savedUser,savedComment, "testReplyContent"))
+        Mono<Void> deleteReply = replyService.createReply(new Reply(savedComment,"testAuthorId","testAuthorUserId", "testReplyContent"))
                 .flatMap(reply -> replyService.deleteReplyById(reply.getId()));
         // then
         StepVerifier.create(deleteReply)

@@ -33,7 +33,6 @@ subprojects {
 
 
     dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-web'
         compileOnly 'org.projectlombok:lombok'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -56,12 +55,45 @@ subprojects {
     }
 }
 
-project(':NoticeBoardApi') {
+project(':UserManageApi') {
     dependencies {
+//        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
         // mongoDB
         implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
-        implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+        // WebFlux
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        testImplementation 'io.projectreactor:reactor-test:3.4.29'
+
+        // json
+        implementation 'com.auth0:java-jwt:4.4.0'
+
+        // security
+//        implementation 'org.springframework.boot:spring-boot-starter-security'
+//        testImplementation 'org.springframework.security:spring-security-test'
+
+        // jakarta servlet
+//        compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+//        compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
+//        implementation 'org.springframework.boot:spring-boot-starter-web'
+    }
+}
+
+
+project(':NoticeBoardApi') {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        // discoveryClient
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+        // mongoDB
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+        // WebFlux
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
         testImplementation 'io.projectreactor:reactor-test:3.4.29'
     }
 }
@@ -71,4 +103,25 @@ project(':ServiceDiscovery'){
         implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
     }
 }
+
+project(':ApiGateway'){
+    dependencies {
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+        implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+
+        // json
+        implementation 'com.auth0:java-jwt:4.4.0'
+
+        // WebFlux
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        testImplementation 'io.projectreactor:reactor-test:3.4.29'
+    }
+}
+
+project(':ApiConfig'){
+    dependencies {
+        implementation 'org.springframework.cloud:spring-cloud-config-server'
+    }
+}
+
 bootJar.enabled = false

@@ -5,24 +5,20 @@ import com.example.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
 public class ServiceConfig {
-    private final SiteUserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final RecommendationRepository recommendationRepository;
-
-    @Bean
-    public SiteUserService userService() {
-        return new SiteUserServiceImpl(userRepository,deleteService());
-    }
+    private final WebClient.Builder loadBalancedWebClientBuilder;
 
     @Bean
     public PostService postService() {
-        return new PostServiceImpl(postRepository,recommendService(),formConverter(),deleteService());
+        return new PostServiceImpl(loadBalancedWebClientBuilder,postRepository,recommendService(),formConverter(),deleteService());
     }
 
     @Bean
@@ -42,7 +38,7 @@ public class ServiceConfig {
 
     @Bean
     public FormConverter formConverter() {
-        return new FormConverterImpl(userRepository, postRepository, commentRepository);
+        return new FormConverterImpl(postRepository, commentRepository,loadBalancedWebClientBuilder);
     }
 
     @Bean
@@ -52,6 +48,6 @@ public class ServiceConfig {
 
     @Bean
     public DeleteService deleteService() {
-        return new DeleteServiceImpl(userRepository, postRepository, commentRepository, replyRepository, recommendationRepository);
+        return new DeleteServiceImpl(postRepository, commentRepository, replyRepository, recommendationRepository);
     }
 }

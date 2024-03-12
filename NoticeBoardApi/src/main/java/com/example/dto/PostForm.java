@@ -10,41 +10,42 @@ import static com.example.services.RecommendServiceImpl.UN_RECOMMEND_KEY;
 
 @Getter
 public class PostForm {
-    private String authorId;
+    private String postId;
+    private String authorUserId;
     private String title;
     private String content;
-    private String postId;
     private Instant createdDate;
-    private String authorName;
     private int recommendCnt;
     private int unRecommendCnt;
 
-    private PostForm() {
+    public PostForm(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
-    private PostForm(String postId, String title, Instant createdDate, String authorName, int recommendCnt) {
+    private PostForm(String postId, String title, Instant createdDate, String authorUserId, int recommendCnt) {
         this.postId = postId;
         this.title = title;
         this.createdDate = createdDate;
-        this.authorName = authorName;
+        this.authorUserId = authorUserId;
         this.recommendCnt = recommendCnt;
     }
 
-    public PostForm(String title, String content, Instant createdDate, String authorName, int recommendCnt, int unRecommendCnt) {
+    private PostForm(String postId, String title, String content, Instant createdDate, String authorUserId, int recommendCnt, int unRecommendCnt) {
+        this.postId = postId;
         this.title = title;
         this.content = content;
         this.createdDate = createdDate;
-        this.authorName = authorName;
+        this.authorUserId = authorUserId;
         this.recommendCnt = recommendCnt;
         this.unRecommendCnt = unRecommendCnt;
     }
 
-    public static PostForm getPostToShowTable(Post post) {
-        return new PostForm(post.getId(), post.getTitle(), post.getCreatedDate(),post.getAuthor().getName(),post.getRecommendUserIds().get(RECOMMEND_KEY).size());
+    public static PostForm getPostFormToShowTable(Post post) {
+        return new PostForm(post.getId(), post.getTitle(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size());
     }
 
-    public static PostForm getPostToShowDetail(Post post) {
-        return new PostForm(post.getTitle(), post.getContent(), post.getCreatedDate(), post.getAuthor().getName(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getRecommendUserIds().get(UN_RECOMMEND_KEY).size());
+    public static PostForm getPostFormToShowDetail(Post post) {
+        return new PostForm(post.getId(),post.getTitle(), post.getContent(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getRecommendUserIds().get(UN_RECOMMEND_KEY).size());
     }
-
 }

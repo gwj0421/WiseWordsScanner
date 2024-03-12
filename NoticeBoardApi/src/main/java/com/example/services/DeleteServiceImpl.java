@@ -8,19 +8,10 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class DeleteServiceImpl implements DeleteService {
-    private final SiteUserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final RecommendationRepository recommendationRepository;
-
-    @Override
-    public Mono<Void> deleteSiteUser(String id) {
-        return userRepository.deleteById(id)
-                .then(postRepository.deletePostsByAuthorId(id))
-                .then(commentRepository.deleteCommentsByAuthorId(id))
-                .then(replyRepository.deleteRepliesByAuthorId(id));
-    }
 
     @Override
     public Mono<Void> deletePost(String id) {

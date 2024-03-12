@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dao.Post;
+import com.example.dto.CreatePostForm;
 import com.example.dto.PageablePostsResponse;
 import com.example.dto.PostForm;
 import com.example.services.PostService;
@@ -17,9 +18,9 @@ import reactor.core.publisher.Mono;
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("id/{id}")
+    @GetMapping("/id/{id}")
     public Mono<PostForm> getPostById(@PathVariable String id) {
-        return postService.getPostDetailById(id).doOnNext(postForm -> log.info(postForm.getTitle()));
+        return postService.getPostDetailById(id);
     }
 
     @GetMapping("userId/{userId}")
@@ -29,15 +30,16 @@ public class PostController {
 
     @GetMapping("/page")
     public Mono<PageablePostsResponse> getPostsByPage(
-            @RequestParam(value = "page",defaultValue = "0") int page,
-            @RequestParam(value = "size",defaultValue = "10") int size
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        return postService.getPostsByPage(page,size);
+        return postService.getPostsByPage(page, size);
     }
 
     @PostMapping()
-    public Mono<Post> createPost(@RequestBody PostForm postForm) {
-        return postService.createPost(postForm);
+    public Mono<Post> createPost(@RequestHeader("X-Authorization-Id") String authorId, @RequestBody CreatePostForm createPostForm) {
+        return postService.findAuthorUserIdByAuthorId(authorId)
+                .flatMap(authorUserId -> postService.createPost(new Post(authorId, authorUserId, createPostForm.getTitle(), createPostForm.getContent())));
     }
 
     @DeleteMapping("/{id}")

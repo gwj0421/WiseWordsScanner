@@ -18,15 +18,16 @@ public class Reply extends DateInfo implements Recommendable {
     @Id
     private String id;
     @DocumentReference
-    private SiteUser author;
-    @DocumentReference
     private Comment comment;
+    private String authorId;
+    private String authorUserId;
     private String replyContent;
     private Map<String, List<String>> recommendUserIds;
 
-    public Reply(SiteUser author, Comment comment, String replyContent) {
-        this.author = author;
+    public Reply(Comment comment,String authorId, String authorUserId, String replyContent) {
         this.comment = comment;
+        this.authorId = authorId;
+        this.authorUserId = authorUserId;
         this.replyContent = replyContent;
         this.recommendUserIds = new HashMap<>(Map.of("recommend", new ArrayList<>(), "unRecommend", new ArrayList<>()));
     }

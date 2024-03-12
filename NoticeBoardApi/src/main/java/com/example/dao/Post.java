@@ -16,13 +16,15 @@ import java.util.Map;
 public class Post extends DateInfo implements Recommendable {
     @Id
     private String id;
-    private SiteUser author;
+    private String authorId;
+    private String authorUserId;
     private String title;
     private String content;
     private Map<String, List<String>> recommendUserIds;
 
-    public Post(SiteUser author, String title, String content) {
-        this.author = author;
+    public Post(String authorId, String authorUserId,String title, String content) {
+        this.authorId = authorId;
+        this.authorUserId = authorUserId;
         this.title = title;
         this.content = content;
         this.recommendUserIds = new HashMap<>(Map.of("recommend", new ArrayList<>(), "unRecommend", new ArrayList<>()));
