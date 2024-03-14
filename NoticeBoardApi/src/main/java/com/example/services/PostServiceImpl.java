@@ -76,28 +76,18 @@ public class PostServiceImpl implements PostService {
                         .map(postForms ->
                                 new PageablePostsResponse(page, size, totalElements, (int) Math.ceil((double) totalElements / size), postForms)
                         ));
-//                    return loadBalancedWebClientBuilder.build().post().uri("http://user-manage-api/user/ids")
-//                            .bodyValue(ids)
-//                            .retrieve()
-//                            .bodyToFlux(String.class)
-//                            .collectList()
-//                            .flatMap(userIds -> {
-//                                return Mono.just();
-//                            });
-//        return postRepository.findAllBy(PageRequest.of(page,size,sort))
-//                .map(post -> {
-//                    ids.add(post.getAuthorId());
-//                    return PostForm.getPostToShowTable(post);
-//                })
-//                .collectList()
-//                .zipWith(postRepository.count())
-//                .map(tuple -> {
-//                    List<PostForm> posts = tuple.getT1();
-//                    Long totalElements = tuple.getT2();
-//                    int totalPages = (int) Math.ceil((double) totalElements / size);
-//                    loadBalancedWebClientBuilder.build().get().uri("http://user-manage-api/")
-//                    return new PageablePostsResponse(page,size,totalElements,totalPages,posts);
-//                });
+    }
+
+    @Override
+    public Mono<PageablePostsResponse> getPostsBySearch(String keyword,int page, int size) {
+        Sort sort = Sort.by(Sort.Order.desc("createdDate"));
+        return postRepository.countAllByTitleContainingIgnoreCaseOrAuthorUserIdIsOrContentContainingIgnoreCase(keyword,keyword,keyword)
+                .flatMap(totalElements -> postRepository.findAllByTitleContainingIgnoreCaseOrAuthorUserIdIsOrContentContainingIgnoreCase(keyword, keyword,keyword,PageRequest.of(page, size, sort))
+                        .map(PostForm::getPostFormToShowTable)
+                        .collectList()
+                        .map(postForms ->
+                                new PageablePostsResponse(page, size, totalElements, (int) Math.ceil((double) totalElements / size), postForms)
+                        ));
     }
 
     @Override

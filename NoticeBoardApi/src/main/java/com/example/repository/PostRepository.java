@@ -11,5 +11,9 @@ public interface PostRepository extends ReactiveMongoRepository<Post, String> {
     Flux<Post> findPostsByAuthorId(String id);
     Flux<Post> findByAuthorId(String authorId);
     Flux<Post> findAllBy(Pageable pageable);
+
+    Mono<Long> countAllByTitleContainingIgnoreCaseOrAuthorUserIdIsOrContentContainingIgnoreCase(String titleKeyword, String userIdKeyword, String contentKeyword);
+    Flux<Post> findAllByTitleContainingIgnoreCaseOrAuthorUserIdIsOrContentContainingIgnoreCase(String titleKeyword, String userIdKeyword,String contentKeyword,Pageable pageable);
+    Flux<Post> findAllByTitleContainingIgnoreCaseOrAuthorUserIdIsOrContentContainingIgnoreCase(String titleKeyword, String userIdKeyword,String contentKeyword);
     Mono<Void> deletePostsByAuthorId(String authorId);
 }

@@ -6,6 +6,7 @@ import PostDetail from "./pages/postDetail/PostDetail";
 import MakingPost from "./pages/postDetail/MakingPost";
 import SignIn from "./pages/login/SignIn";
 import SignUp from "./pages/login/SignUp";
+import SearchTable from "./pages/SearchTable";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Navbar/>
           <Routes>
             <Route exact path='/' element={<PostsTable />}/>
+            <Route path='/search/:keyword' element={<SearchTable />}/>
             <Route path='/post/id/:postId' element={<PostDetail/>}/>
             <Route path='/post' element={<MakingPost/>}/>
             <Route path='/login' element={<SignIn/>}/>

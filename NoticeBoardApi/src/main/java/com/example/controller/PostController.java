@@ -1,12 +1,12 @@
 package com.example.controller;
 
 import com.example.dao.Post;
-import com.example.dto.CreatePostForm;
 import com.example.dto.PageablePostsResponse;
 import com.example.dto.PostForm;
 import com.example.services.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,15 +31,18 @@ public class PostController {
     @GetMapping("/page")
     public Mono<PageablePostsResponse> getPostsByPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword",required = false) String keyword
     ) {
-        return postService.getPostsByPage(page, size);
+        if (keyword == null) {
+            return postService.getPostsByPage(page, size);
+        }
+        return postService.getPostsBySearch(keyword, page, size);
     }
 
     @PostMapping()
-    public Mono<Post> createPost(@RequestHeader("X-Authorization-Id") String authorId, @RequestBody CreatePostForm createPostForm) {
-        return postService.findAuthorUserIdByAuthorId(authorId)
-                .flatMap(authorUserId -> postService.createPost(new Post(authorId, authorUserId, createPostForm.getTitle(), createPostForm.getContent())));
+    public Mono<PostForm> createPost(ServerHttpRequest request, @RequestBody PostForm postForm) {
+        return postService.createPost(postForm, request);
     }
 
     @DeleteMapping("/{id}")
