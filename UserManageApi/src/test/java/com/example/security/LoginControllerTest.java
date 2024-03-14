@@ -9,9 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import static com.example.utils.CookieUtils.UID_KEY;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -43,7 +44,7 @@ class LoginControllerTest {
                 .bodyValue(loginForm)
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().exists(HttpHeaders.AUTHORIZATION);
+                .expectCookie().exists(UID_KEY);
     }
 
     @Test
@@ -61,12 +62,12 @@ class LoginControllerTest {
                 .bodyValue(loginFormByWrongUserId)
                 .exchange()
                 .expectStatus().isUnauthorized()
-                .expectHeader().doesNotExist(HttpHeaders.AUTHORIZATION);
+                .expectCookie().doesNotExist(UID_KEY);
         webTestClient.post()
                 .uri("/user/login")
                 .bodyValue(loginFormByWrongPassword)
                 .exchange()
                 .expectStatus().isUnauthorized()
-                .expectHeader().doesNotExist(HttpHeaders.AUTHORIZATION);
+                .expectCookie().doesNotExist(UID_KEY);
     }
 }
