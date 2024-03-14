@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dao.SiteUser;
 import com.example.dto.LoginForm;
+import com.example.dto.RoleType;
 import com.example.dto.SignUpForm;
 import com.example.repository.SiteUserRepository;
 import com.example.utils.CookieUtils;
@@ -36,7 +37,7 @@ public class LoginServiceImpl implements LoginService {
             String reqAuthRole = initAuthRole.get();
             String authorId = initAuthorId.get().getValue();
             return userRepository.findSiteUserById(authorId)
-                    .filter(user -> user.getRole().equals(reqAuthRole))
+                    .filter(user -> RoleType.isMatch(user.getRoleType(),reqAuthRole))
                     .map(user -> ResponseEntity.status(HttpStatus.OK).<Void>build())
                     .defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
         }
@@ -58,8 +59,8 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Mono<ResponseEntity<Void>> signUp(@RequestBody SignUpForm signUpForm) {
         return userRepository.findSiteUserByUserId(signUpForm.getUserId())
-                .flatMap(user -> userRepository.save(new SiteUser(signUpForm.getName(), signUpForm.getUserId(), passwordEncoder.encode(signUpForm.getPassword1()), signUpForm.getEmail()))
-                        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).<Void>build()))
-                .defaultIfEmpty(ResponseEntity.status(HttpStatus.CONFLICT).build());
+                .map(user -> ResponseEntity.status(HttpStatus.CONFLICT).<Void>build())
+                .switchIfEmpty(Mono.defer(() -> userRepository.save(new SiteUser(signUpForm.getName(), signUpForm.getUserId(), passwordEncoder.encode(signUpForm.getPassword1()), signUpForm.getEmail()))
+                        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build())) );
     }
 }
