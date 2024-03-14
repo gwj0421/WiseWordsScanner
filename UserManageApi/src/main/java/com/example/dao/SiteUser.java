@@ -1,6 +1,7 @@
 package com.example.dao;
 
 import com.example.dto.DateInfo;
+import com.example.dto.RoleType;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,7 +15,7 @@ public class SiteUser extends DateInfo {
     private String userId;
     private String password;
     private String email;
-    private String role;
+    private RoleType roleType;
 
     public SiteUser() {
     }
@@ -24,6 +25,6 @@ public class SiteUser extends DateInfo {
         this.userId = userId;
         this.password = password;
         this.email = email;
-        this.role = "ROLE_USER";
+        this.roleType = RoleType.USER;
     }
 }
