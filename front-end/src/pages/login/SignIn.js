@@ -48,9 +48,8 @@ export default function SignIn() {
             });
 
             if (response.status === 200) {
-                navigate('/', {
-                    state: response.headers['authorization'] , replace: true
-                });
+                // window.location.replace('/');
+                navigate('/',{replace:true})
             }
         } catch (e) {
             console.error(e);

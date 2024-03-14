@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {httpClientForCredentials} from "../../index";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import './MakingPost.css';
+import checkAuth from "../function/authUtils";
 
 // function GetCategory() {
 //     const [category, setCategory] = useState({});
@@ -71,17 +72,12 @@ import './MakingPost.css';
 //     </>);
 // }
 
-const HandleQuestionSubmit = async (body,navigate) => {
-    try {
-        const response = await httpClientForCredentials.post('/api/post',body,{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        navigate(`/post/id/${response.data.id}`);
-    } catch (error) {
-        console.log('error : ' + error);
-    }
+const HandleQuestionSubmit = async (body, navigate) => {
+    await httpClientForCredentials.post('/api/post',body,{
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => navigate(`/post/id/${response.data.postId}`,{replace:true}));
 };
 
 function MakingPost() {
@@ -95,25 +91,8 @@ function MakingPost() {
     };
 
     useEffect(() => {
-        if (httpClientForCredentials.defaults.headers.common['Authorization'] != undefined) {
-            const fetchData = async () => {
-                try {
-                    const response = await httpClientForCredentials.get('/api/user/auth');
-                    if (!response.data) {
-                        navigate('/login', {replace: true});
-                    }
-                } catch (error) {
-                    console.log('error : ' + error);
-                }
-            };
-
-            fetchData();
-        }
-    }, []); // Empty dependency array means this effect will only run once when the component mounts
-
-    if (httpClientForCredentials.defaults.headers.common['Authorization'] == undefined) {
-        return <Navigate to={'/login'}/>;
-    }
+        checkAuth();
+    },[]);
 
     return (
         <>
@@ -133,22 +112,6 @@ function MakingPost() {
             </div>
         </>
     );
-    // return (
-    //     <>
-    //         <h2 align="center">게시글 작성</h2>
-    //         <div>
-    //             <div>
-    //                 <label>제목</label>
-    //                 <input onChange={(event) => setTitle(event.target.value)}></input>
-    //             </div>
-    //             <div>
-    //                 <label>내용</label>
-    //                 <textarea onChange={(event) => setContent(event.target.value)}></textarea>
-    //                 <button onClick={() => HandleQuestionSubmit(body)}>등록</button>
-    //             </div>
-    //         </div>
-    //     </>
-    // );
 }
 
 export default MakingPost;

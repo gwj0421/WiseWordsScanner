@@ -13,15 +13,11 @@ const PostsTable = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const location = useLocation();
-    if (location.state != null) {
-        httpClientForCredentials.defaults.headers.common['Authorization'] = location.state;
-    }
 
     const fetchPosts = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/post/page?page=${currentPage}&size=${pageSize}`, {
-                withCredentials: true, headers: {
+            const response = await httpClientForCredentials.get(`/api/post/page?page=${currentPage}&size=${pageSize}`, {
+                headers: {
                     'Content-Type': 'application/json'
                 }
             });
@@ -55,10 +51,17 @@ const PostsTable = () => {
         }
     };
 
+    const logout = async () => {
+        await httpClientForCredentials.get(`/api/user/logout`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    };
+
     return (
         <div>
             <div>
-                {httpClientForCredentials.defaults.headers.common['Authorization']} is here
                 <PostDetailHeader></PostDetailHeader>
                 <CommonTable headersName={['글번호', '제목', '등록일', '작성자', '추천수']}>
                     {posts.map((post, index) => (
@@ -88,6 +91,9 @@ const PostsTable = () => {
             <Link to={'/login'}>
                 Login
             </Link>
+            <button onClick={() => logout()}>
+                Logout
+            </button>
         </div>
     );
 };
