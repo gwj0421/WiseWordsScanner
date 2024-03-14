@@ -17,6 +17,19 @@ public class RecommendServiceImpl implements RecommendService {
     public static final String RECOMMEND_KEY = "recommend";
     public static final String UN_RECOMMEND_KEY = "unRecommend";
     private final RecommendationRepository recommendationRepository;
+
+    @Override
+    public Mono<Integer> initCheck(ReactiveMongoRepository<Recommendable, String> targetRepository, TargetType targetType, String targetId, String recommenderId) {
+        return recommendationRepository.findRecommendationByTargetTypeAndTargetIdAndUserId(targetType,targetId,recommenderId)
+                .map(recommendation -> {
+                    if (recommendation.isRecommend()) {
+                        return 1;
+                    }
+                    return -1;
+                })
+                .switchIfEmpty(Mono.defer(()-> Mono.just(0)));
+    }
+
     @Override
     public Mono<Void> recommend(ReactiveMongoRepository<Recommendable,String> targetRepository, TargetType targetType, String targetId, String recommenderId, boolean userRecommend) {
         return recommendationRepository.findRecommendationsByTargetTypeAndTargetIdAndUserId(targetType, targetId, recommenderId)
