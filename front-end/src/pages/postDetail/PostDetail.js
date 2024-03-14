@@ -14,7 +14,8 @@ function PostDetail() {
         recommendCnt: 0,
         unRecommendCnt: 0,
         createdDate: 'Loading...',
-        content: 'Loading...'
+        content: 'Loading...',
+        visitCnt: 0
     });
     const [likeState, setLikeState] = useState(0);
 
@@ -79,7 +80,10 @@ function PostDetail() {
                         <button onClick={() => handleLike(-1)}
                                 style={{backgroundColor: likeState === -1 ? 'red' : 'gray'}}>{targetPost.unRecommendCnt}</button>
                     </div>
-                    {/*<div>{`${targetPost.recommendCnt} / ${targetPost.unRecommendCnt}`}</div>*/}
+                </div>
+                <div className="post-detail-view-row">
+                    <label>조회수</label>
+                    <label>{targetPost.visitCnt}</label>
                 </div>
                 <div className="post-detail-view-row">
                     <label>작성일</label>

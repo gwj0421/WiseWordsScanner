@@ -63,7 +63,7 @@ const PostsTable = () => {
         <div>
             <div>
                 <PostDetailHeader></PostDetailHeader>
-                <CommonTable headersName={['글번호', '제목', '등록일', '작성자', '추천수']}>
+                <CommonTable headersName={['글번호', '제목', '등록일', '작성자', '조회수','추천수']}>
                     {posts.map((post, index) => (
                         <CommonTableRow key={post.postId}>
                             <CommonTableColumn>{currentPage * pageSize + index + 1}</CommonTableColumn>
@@ -74,6 +74,7 @@ const PostsTable = () => {
                             </CommonTableColumn>
                             <CommonTableColumn>{post.createdDate}</CommonTableColumn>
                             <CommonTableColumn>{post.authorUserId}</CommonTableColumn>
+                            <CommonTableColumn>{post.visitCnt}</CommonTableColumn>
                             <CommonTableColumn>{post.recommendCnt}</CommonTableColumn>
                         </CommonTableRow>
                     ))}

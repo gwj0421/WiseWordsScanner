@@ -93,6 +93,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public Mono<PostForm> getPostDetailById(String id) {
         return postRepository.findPostById(id)
+                .flatMap(post -> {
+                    post.visitPost();
+                    return postRepository.save(post);
+                })
                 .map(PostForm::getPostFormToShowDetail);
     }
 

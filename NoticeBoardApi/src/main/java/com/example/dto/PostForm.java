@@ -18,6 +18,7 @@ public class PostForm {
     private Instant createdDate;
     private int recommendCnt;
     private int unRecommendCnt;
+    private long visitCnt;
 
     @JsonCreator
     public PostForm(String title, String content) {
@@ -25,15 +26,16 @@ public class PostForm {
         this.content = content;
     }
 
-    private PostForm(String postId, String title, Instant createdDate, String authorUserId, int recommendCnt) {
+    private PostForm(String postId, String title, Instant createdDate, String authorUserId, int recommendCnt,long visitCnt) {
         this.postId = postId;
         this.title = title;
         this.createdDate = createdDate;
         this.authorUserId = authorUserId;
         this.recommendCnt = recommendCnt;
+        this.visitCnt = visitCnt;
     }
 
-    private PostForm(String postId, String title, String content, Instant createdDate, String authorUserId, int recommendCnt, int unRecommendCnt) {
+    private PostForm(String postId, String title, String content, Instant createdDate, String authorUserId, int recommendCnt, int unRecommendCnt, long visitCnt) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -41,13 +43,14 @@ public class PostForm {
         this.authorUserId = authorUserId;
         this.recommendCnt = recommendCnt;
         this.unRecommendCnt = unRecommendCnt;
+        this.visitCnt = visitCnt;
     }
 
     public static PostForm getPostFormToShowTable(Post post) {
-        return new PostForm(post.getId(), post.getTitle(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size());
+        return new PostForm(post.getId(), post.getTitle(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getVisitCnt());
     }
 
     public static PostForm getPostFormToShowDetail(Post post) {
-        return new PostForm(post.getId(), post.getTitle(), post.getContent(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getRecommendUserIds().get(UN_RECOMMEND_KEY).size());
+        return new PostForm(post.getId(), post.getTitle(), post.getContent(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getRecommendUserIds().get(UN_RECOMMEND_KEY).size(), post.getVisitCnt());
     }
 }

@@ -20,6 +20,7 @@ public class Post extends DateInfo implements Recommendable {
     private String authorUserId;
     private String title;
     private String content;
+    private long visitCnt;
     private Map<String, List<String>> recommendUserIds;
 
     public Post(String authorId, String authorUserId,String title, String content) {
@@ -27,10 +28,15 @@ public class Post extends DateInfo implements Recommendable {
         this.authorUserId = authorUserId;
         this.title = title;
         this.content = content;
+        this.visitCnt = 0;
         this.recommendUserIds = new HashMap<>(Map.of("recommend", new ArrayList<>(), "unRecommend", new ArrayList<>()));
     }
 
     public void changeContent(String content) {
         this.content = content;
+    }
+
+    public void visitPost() {
+        this.visitCnt++;
     }
 }
