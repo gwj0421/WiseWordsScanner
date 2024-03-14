@@ -1,6 +1,7 @@
 package com.example.dto;
 
 import com.example.dao.Post;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -18,6 +19,7 @@ public class PostForm {
     private int recommendCnt;
     private int unRecommendCnt;
 
+    @JsonCreator
     public PostForm(String title, String content) {
         this.title = title;
         this.content = content;
@@ -46,6 +48,6 @@ public class PostForm {
     }
 
     public static PostForm getPostFormToShowDetail(Post post) {
-        return new PostForm(post.getId(),post.getTitle(), post.getContent(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getRecommendUserIds().get(UN_RECOMMEND_KEY).size());
+        return new PostForm(post.getId(), post.getTitle(), post.getContent(), post.getCreatedDate(), post.getAuthorUserId(), post.getRecommendUserIds().get(RECOMMEND_KEY).size(), post.getRecommendUserIds().get(UN_RECOMMEND_KEY).size());
     }
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class PostServiceImpl implements PostService {
+    public static final String UID_KEY = "Uid";
     private static final TargetType POST_TARGET_TYPE = TargetType.POST;
     private final WebClient.Builder loadBalancedWebClientBuilder;
     private final PostRepository postRepository;
@@ -32,10 +34,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Mono<Post> createPost(PostForm postForm) {
+    public Mono<PostForm> createPost(PostForm postForm, ServerHttpRequest request) {
+        if (!request.getCookies().get(UID_KEY).isEmpty()) {
+            String authorId = request.getCookies().get(UID_KEY).get(0).getValue();
+            return formConverter.toPost(postForm, authorId)
+                    .flatMap(postRepository::save)
+                    .map(PostForm::getPostFormToShowDetail);
+        }
         return Mono.empty();
-//        return formConverter.toPost(postForm)
-//                .flatMap(postRepository::save);
     }
 
     @Override

@@ -5,10 +5,7 @@ import com.example.service.SiteUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,18 +15,13 @@ public class SiteUserController {
     private final SiteUserService userService;
 
     @GetMapping("/id/{id}")
-    public Mono<String> getSiteUserById(@PathVariable String id) {
+    public Mono<String> getUserIdById(@PathVariable String id) {
         return userService.getUserById(id).map(SiteUser::getUserId);
     }
 
     @GetMapping("/userId/{userId}")
     public Mono<SiteUser> getSiteUserByUserId(@PathVariable String userId) {
         return userService.getUserByUserId(userId);
-    }
-
-    @PostMapping("/ids")
-    public Flux<String> getUserIdsByIds(@RequestBody List<String> ids) {
-        return userService.getUserIdsByIds(ids);
     }
 
     @DeleteMapping("/{id}")

@@ -14,6 +14,7 @@ public class SiteUser extends DateInfo {
     private String userId;
     private String password;
     private String email;
+    private String role;
 
     public SiteUser() {
     }
@@ -23,5 +24,6 @@ public class SiteUser extends DateInfo {
         this.userId = userId;
         this.password = password;
         this.email = email;
+        this.role = "ROLE_USER";
     }
 }

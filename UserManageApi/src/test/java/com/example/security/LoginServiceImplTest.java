@@ -1,9 +1,10 @@
 package com.example.security;
 
+import com.example.config.ServiceConfig;
+import com.example.config.WebClientConfig;
 import com.example.dto.SignUpForm;
 import com.example.repository.SiteUserRepository;
 import com.example.service.LoginService;
-import com.example.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ import reactor.test.StepVerifier;
 
 @DataMongoTest
 @Slf4j
-@Import({SecurityConfig.class,TokenSecurityContextRepository.class,TokenAuthenticationManager.class, JwtUtils.class})
+@Import({ServiceConfig.class, WebClientConfig.class})
 class LoginServiceImplTest {
     @Autowired
     private SiteUserRepository userRepository;

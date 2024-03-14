@@ -23,31 +23,20 @@ public class FormConverterImpl implements FormConverter {
     private final WebClient.Builder loadBalancedWebClientBuilder;
 
     @Override
-    public Mono<Post> toPost(PostForm postForm) {
-        return Mono.empty();
-//        return loadBalancedWebClientBuilder.build().get().uri("http://user-manage-api/id/" + postForm.getAuthorId())
-//                .retrieve()
-//                .bodyToMono(SiteUser.class)
-//                .map(user -> new Post(user, postForm.getTitle(), postForm.getContent()));
+    public Mono<Post> toPost(PostForm postForm, String authorId) {
+        return loadBalancedWebClientBuilder.build().get().uri("http://user-manage-api/user/id/" + authorId)
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(authorUserId -> new Post(authorId, authorUserId, postForm.getTitle(), postForm.getContent()));
     }
 
     @Override
     public Mono<Comment> toComment(CommentForm commentForm) {
         return Mono.empty();
-//        return loadBalancedWebClientBuilder.build().get().uri("http://user-manage-api/id/" + commentForm.getAuthorId())
-//                .retrieve()
-//                .bodyToMono(SiteUser.class)
-//                .flatMap(user -> postRepository.findPostById(commentForm.getPostId())
-//                        .map(post -> new Comment(user, post, commentForm.getContent())));
     }
 
     @Override
     public Mono<Reply> toReply(ReplyForm replyForm) {
         return Mono.empty();
-//        return loadBalancedWebClientBuilder.build().get().uri("http://user-manage-api/id/" + replyForm.getAuthorId())
-//                .retrieve()
-//                .bodyToMono(SiteUser.class)
-//                .flatMap(user -> commentRepository.findById(replyForm.getCommentId())
-//                        .map(comment -> new Reply(user, comment, replyForm.getReplyContent())));
     }
 }

@@ -1,43 +1,50 @@
 package com.example.utils;
 
 
+import com.example.dao.SiteUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.util.MultiValueMap;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class CookieUtils {
-    public static final String REFRESH_TOKEN_KEY = "RefreshToken";
+    public static final String UID_KEY = "Uid";
+    public static final String COOKIE_DOMAIN = "localhost";
+    public static final String COOKIE_PATH = "/";
+
     private CookieUtils() {
     }
 
-    public static void addCookie(ServerHttpResponse response, String refreshToken) {
-        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_KEY, refreshToken)
+    public static Optional<HttpCookie> getCookie(ServerHttpRequest request) {
+        return Optional.ofNullable(request.getCookies().getFirst(UID_KEY));
+    }
+
+    public static void addCookie(ServerHttpResponse response, SiteUser user) {
+        ResponseCookie cookie = ResponseCookie.from(UID_KEY, user.getId())
                 .httpOnly(true)
                 .maxAge(3600000)
                 .sameSite("None")
-                .domain("localhost")
-                .path("/")
+                .secure(true)
+                .domain(COOKIE_DOMAIN)
+                .path(COOKIE_PATH)
                 .build();
         response.addCookie(cookie);
     }
 
     public static void deleteCookie(ServerHttpRequest request, ServerHttpResponse response) {
-        MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-        if (cookies != null) {
-            for (Map.Entry<String, List<HttpCookie>> entry : cookies.entrySet()) {
-                for (HttpCookie cookie : entry.getValue()) {
-                    if (cookie.getName().equals(REFRESH_TOKEN_KEY)) {
-                        response.addCookie(ResponseCookie.from(cookie.getName(), cookie.getValue()).maxAge(0).build());
-                    }
-                }
-            }
+        if (CookieUtils.getCookie(request).isPresent()) {
+            response.addCookie(ResponseCookie.from(UID_KEY, "")
+                    .httpOnly(true)
+                    .maxAge(0)
+                    .sameSite("None")
+                    .secure(true)
+                    .domain(COOKIE_DOMAIN)
+                    .path(COOKIE_PATH)
+                    .build());
         }
     }
 }

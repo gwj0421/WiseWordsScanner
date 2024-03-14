@@ -1,8 +1,9 @@
 package com.example.controller;
 
-import com.example.dto.SignUpForm;
 import com.example.dto.LoginForm;
+import com.example.dto.SignUpForm;
 import com.example.service.LoginService;
+import com.example.utils.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,19 @@ public class LoginController {
     private final LoginService loginService;
 
     @GetMapping("/auth")
-    public Mono<Boolean> checkAuth(ServerHttpRequest request) {
+    public Mono<ResponseEntity<Void>> checkAuth(ServerHttpRequest request) {
         return loginService.checkAuth(request);
     }
 
     @PostMapping("/login")
     public Mono<ResponseEntity<Void>> login(@RequestBody LoginForm loginForm, ServerHttpRequest request, ServerHttpResponse response) {
         return loginService.login(loginForm, request, response);
+    }
+
+    @GetMapping("/logout")
+    public Mono<ResponseEntity<Void>> logout(ServerHttpRequest request,ServerHttpResponse response) {
+        CookieUtils.deleteCookie(request,response);
+        return Mono.just(ResponseEntity.ok().build());
     }
 
     @PostMapping("/signUp")

@@ -8,10 +8,9 @@ import reactor.core.publisher.Mono;
 
 public interface PostService {
     Mono<Post> createPost(Post post);
-    Mono<Post> createPost(PostForm postForm);
+    Mono<PostForm> createPost(PostForm postForm, ServerHttpRequest request);
     Mono<Post> readPostById(String id);
     Flux<Post> readPostsByAuthorId(String userId);
-
     Mono<String> findAuthorUserIdByAuthorId(String authorId);
     Mono<Void> recommendPost(String postId, String recommenderId,boolean userRecommend);
     Mono<PageablePostsResponse> getPostsByPage(int pageNumber, int pageSize);

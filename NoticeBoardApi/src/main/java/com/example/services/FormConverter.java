@@ -9,7 +9,7 @@ import com.example.dto.ReplyForm;
 import reactor.core.publisher.Mono;
 
 public interface FormConverter {
-    Mono<Post> toPost(PostForm postForm);
+    Mono<Post> toPost(PostForm postForm,String authorId);
     Mono<Comment> toComment(CommentForm commentForm);
     Mono<Reply> toReply(ReplyForm replyForm);
 }

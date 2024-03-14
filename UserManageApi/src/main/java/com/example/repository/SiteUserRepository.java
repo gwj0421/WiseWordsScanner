@@ -6,10 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface SiteUserRepository extends ReactiveMongoRepository<SiteUser, String> {
     Mono<SiteUser> findSiteUserByUserId(String userId);
-
     Mono<SiteUser> findSiteUserById(String id);
-    // findUserIdBySiteUserId
     Mono<Boolean> existsSiteUserByUserId(String userId);
-
     Mono<Boolean> existsSiteUserById(String id);
 }
