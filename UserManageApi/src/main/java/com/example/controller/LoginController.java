@@ -22,7 +22,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @GetMapping("/auth")
-    public Mono<ResponseEntity<Void>> checkAuth(ServerHttpRequest request) {
+    public Mono<ResponseEntity<String>> checkAuth(ServerHttpRequest request) {
         return loginService.checkAuth(request);
     }
 

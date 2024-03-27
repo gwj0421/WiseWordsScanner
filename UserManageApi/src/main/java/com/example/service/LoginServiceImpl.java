@@ -30,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Mono<ResponseEntity<Void>> checkAuth(ServerHttpRequest request) {
+    public Mono<ResponseEntity<String>> checkAuth(ServerHttpRequest request) {
         Optional<String> initAuthRole = HeaderUtils.getAuthRole(request);
         Optional<HttpCookie> initAuthorId = CookieUtils.getCookie(request);
         if (initAuthRole.isPresent() && initAuthorId.isPresent()) {
@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
             String authorId = initAuthorId.get().getValue();
             return userRepository.findSiteUserById(authorId)
                     .filter(user -> RoleType.isMatch(user.getRoleType(),reqAuthRole))
-                    .map(user -> ResponseEntity.status(HttpStatus.OK).<Void>build())
+                    .map(user -> ResponseEntity.status(HttpStatus.OK).body(user.getUserId()))
                     .defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
         }
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());

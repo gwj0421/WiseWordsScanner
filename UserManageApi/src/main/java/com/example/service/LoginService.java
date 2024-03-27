@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 
 public interface LoginService {
-    Mono<ResponseEntity<Void>> checkAuth(ServerHttpRequest request);
+    Mono<ResponseEntity<String>> checkAuth(ServerHttpRequest request);
     Mono<ResponseEntity<Void>> login(LoginForm loginForm, ServerHttpRequest request, ServerHttpResponse response);
     Mono<ResponseEntity<Void>> signUp(SignUpForm signUpForm);
 }
