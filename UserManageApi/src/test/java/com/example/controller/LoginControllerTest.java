@@ -1,4 +1,4 @@
-package com.example.security;
+package com.example.controller;
 
 import com.example.dao.SiteUser;
 import com.example.dto.LoginForm;

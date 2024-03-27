@@ -1,10 +1,9 @@
-package com.example.security;
+package com.example.service;
 
 import com.example.config.ServiceConfig;
 import com.example.config.WebClientConfig;
 import com.example.dto.SignUpForm;
 import com.example.repository.SiteUserRepository;
-import com.example.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
