@@ -70,22 +70,14 @@ project(':UserManageApi') {
         // json
         implementation 'com.auth0:java-jwt:4.4.0'
 
-        // security
-//        implementation 'org.springframework.boot:spring-boot-starter-security'
-//        testImplementation 'org.springframework.security:spring-security-test'
-
-        // jakarta servlet
-//        compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
-//        compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
-//        implementation 'org.springframework.boot:spring-boot-starter-web'
+        // CircuitBreaker
+        implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
     }
 }
 
 
 project(':NoticeBoardApi') {
     dependencies {
-//        implementation 'org.springframework.boot:spring-boot-starter-web'
-
         // discoveryClient
         implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
@@ -95,6 +87,9 @@ project(':NoticeBoardApi') {
         // WebFlux
         implementation 'org.springframework.boot:spring-boot-starter-webflux'
         testImplementation 'io.projectreactor:reactor-test:3.4.29'
+
+        // CircuitBreaker
+        implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
     }
 }
 
@@ -115,6 +110,20 @@ project(':ApiGateway'){
         // WebFlux
         implementation 'org.springframework.boot:spring-boot-starter-webflux'
         testImplementation 'io.projectreactor:reactor-test:3.4.29'
+    }
+}
+
+project(':OcrApi') {
+    dependencies {
+        // discoveryClient
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+        // WebFlux
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        testImplementation 'io.projectreactor:reactor-test:3.4.29'
+
+        // CircuitBreaker
+        implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
     }
 }
 
