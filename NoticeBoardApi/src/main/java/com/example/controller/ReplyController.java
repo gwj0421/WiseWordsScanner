@@ -4,6 +4,7 @@ import com.example.dao.Reply;
 import com.example.dto.ReplyForm;
 import com.example.services.ReplyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,8 +26,8 @@ public class ReplyController {
     }
 
     @PostMapping()
-    public Mono<Reply> createReply(@RequestBody ReplyForm replyForm) {
-        return replyService.createReply(replyForm);
+    public Mono<ReplyForm> createReply(ServerHttpRequest request, @RequestBody ReplyForm replyForm) {
+        return replyService.createReply(request,replyForm);
     }
 
     @DeleteMapping("/{id}")

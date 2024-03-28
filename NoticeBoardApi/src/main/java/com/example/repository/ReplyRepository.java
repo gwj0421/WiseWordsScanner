@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReplyRepository extends ReactiveMongoRepository<Reply, String> {
-    Flux<Reply> findRepliesByCommentId(String id);
+    Flux<Reply> findAllByCommentIdOrderByCreatedDate(String id);
 
     Mono<Void> deleteRepliesByAuthorId(String authorId);
 

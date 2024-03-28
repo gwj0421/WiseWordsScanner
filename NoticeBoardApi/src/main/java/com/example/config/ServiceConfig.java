@@ -1,8 +1,12 @@
 package com.example.config;
 
-import com.example.repository.*;
+import com.example.repository.CommentRepository;
+import com.example.repository.PostRepository;
+import com.example.repository.RecommendationRepository;
+import com.example.repository.ReplyRepository;
 import com.example.services.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,15 +19,16 @@ public class ServiceConfig {
     private final ReplyRepository replyRepository;
     private final RecommendationRepository recommendationRepository;
     private final WebClient.Builder loadBalancedWebClientBuilder;
+    private final ReactiveCircuitBreakerFactory circuitBreakerFactory;
 
     @Bean
     public PostService postService() {
-        return new PostServiceImpl(loadBalancedWebClientBuilder,postRepository,recommendService(),formConverter(),deleteService());
+        return new PostServiceImpl(commentService(),replyService(),loadBalancedWebClientBuilder,postRepository,recommendService(),formConverter(),deleteService(),circuitBreakerFactory);
     }
 
     @Bean
     public CommentService commentService() {
-        return new CommentServiceImpl(commentRepository,recommendService(),formConverter(),deleteService());
+        return new CommentServiceImpl(commentRepository,replyService(),recommendService(),formConverter(),deleteService());
     }
 
     @Bean
@@ -32,13 +37,8 @@ public class ServiceConfig {
     }
 
     @Bean
-    public PageService pageService() {
-        return new PageServiceImpl(postService(), commentService(), replyService());
-    }
-
-    @Bean
     public FormConverter formConverter() {
-        return new FormConverterImpl(postRepository, commentRepository,loadBalancedWebClientBuilder);
+        return new FormConverterImpl(postRepository, commentRepository,loadBalancedWebClientBuilder,circuitBreakerFactory);
     }
 
     @Bean
@@ -50,4 +50,5 @@ public class ServiceConfig {
     public DeleteService deleteService() {
         return new DeleteServiceImpl(postRepository, commentRepository, replyRepository, recommendationRepository);
     }
+
 }

@@ -10,6 +10,6 @@ import reactor.core.publisher.Mono;
 
 public interface FormConverter {
     Mono<Post> toPost(PostForm postForm,String authorId);
-    Mono<Comment> toComment(CommentForm commentForm);
-    Mono<Reply> toReply(ReplyForm replyForm);
+    Mono<Comment> toComment(CommentForm commentForm,String authorId);
+    Mono<Reply> toReply(ReplyForm replyForm,String authorId);
 }

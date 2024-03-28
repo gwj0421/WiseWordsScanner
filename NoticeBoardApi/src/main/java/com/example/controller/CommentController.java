@@ -2,11 +2,15 @@ package com.example.controller;
 
 import com.example.dao.Comment;
 import com.example.dto.CommentForm;
+import com.example.dto.CommentWithReplies;
 import com.example.services.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +29,13 @@ public class CommentController {
     }
 
     @GetMapping("postId/{postId}")
-    public Flux<Comment> getPostByPostId(@PathVariable String postId) {
+    public Mono<List<CommentWithReplies>> getPostByPostId(@PathVariable String postId) {
         return commentService.readCommentsByPostId(postId);
     }
 
     @PostMapping()
-    public Mono<Comment> createPost(@RequestBody CommentForm commentForm) {
-        return commentService.createComment(commentForm);
+    public Mono<CommentForm> createPost(ServerHttpRequest request, @RequestBody CommentForm commentForm) {
+        return commentService.createComment(request,commentForm);
     }
 
     @DeleteMapping("/{id}")

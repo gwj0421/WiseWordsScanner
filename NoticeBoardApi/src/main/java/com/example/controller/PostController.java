@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.dao.Post;
 import com.example.dto.PageablePostsResponse;
 import com.example.dto.PostForm;
+import com.example.dto.PostPageForm;
 import com.example.services.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/id/{id}")
-    public Mono<PostForm> getPostById(@PathVariable String id) {
-        return postService.getPostDetailById(id);
+    public Mono<PostPageForm> getPostById(@PathVariable String id) {
+        return postService.getPostPageByPostId(id);
     }
 
     @GetMapping("userId/{userId}")

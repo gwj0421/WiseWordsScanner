@@ -9,6 +9,5 @@ public interface CommentRepository extends ReactiveMongoRepository<Comment, Stri
     Flux<Comment> findCommentsByAuthorId(String id);
     Flux<Comment> findCommentsByPostId(String id);
     Mono<Void> deleteCommentsByAuthorId(String authorId);
-
     Mono<Void> deleteCommentsByPostId(String postId);
 }
