@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class RouteConfiguration {
     private static final String NOTICE_BOARD_API_URI = "lb://notice-board-api";
     private static final String USER_MANAGE_API_URI = "lb://user-manage-api";
+    private static final String OCR_API_URI = "lb://ocr-api";
     private static final String BASIC_AUTHORIZATION_ROLE = "ROLE_USER";
     private final SessionAuthenticationGatewayFilterFactory sessionAuthenticationGatewayFilterFactory;
 
@@ -44,7 +45,7 @@ public class RouteConfiguration {
                         .and().method("POST")
                         .filters(r -> r.rewritePath("/api/user/signUp", "/user/signUp"))
                         .uri(USER_MANAGE_API_URI))
-                .route("recommend",p -> p
+                .route("recommend", p -> p
                         .path("/api/reco/**")
                         .and().method("GET")
                         .filters(r -> r.rewritePath("/api/reco/(?<path>.*)", "/reco/$\\{path}")
@@ -66,7 +67,34 @@ public class RouteConfiguration {
                         .filters(r -> r.rewritePath("/api/post/(?<path>.*)", "/post/$\\{path}")
                                 .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
                         .uri(NOTICE_BOARD_API_URI))
+                .route("ocr-service", p -> p
+                        .path("/api/ocr")
+                        .and().method("POST")
+                        .filters(r -> r.rewritePath("/api/ocr", "/ocr")
+                                .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
+                        .uri(OCR_API_URI))
+                .route("create-comment-service", p -> p
+                        .path("/api/comment")
+                        .and().method("POST")
+                        .filters(r -> r.rewritePath("/api/comment", "/comment")
+                                .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
+                        .uri(NOTICE_BOARD_API_URI))
+                .route("comment-service", p -> p
+                        .path("/api/comment/**")
+                        .filters(r -> r.rewritePath("/api/comment/(?<path>.*)", "/comment/$\\{path}")
+                                .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
+                        .uri(NOTICE_BOARD_API_URI))
+                .route("create-reply-service", p -> p
+                        .path("/api/reply")
+                        .and().method("POST")
+                        .filters(r -> r.rewritePath("/api/reply", "/reply")
+                                .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
+                        .uri(NOTICE_BOARD_API_URI))
+                .route("reply-service", p -> p
+                        .path("/api/reply/**")
+                        .filters(r -> r.rewritePath("/api/reply/(?<path>.*)", "/reply/$\\{path}")
+                                .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
+                        .uri(NOTICE_BOARD_API_URI))
                 .build();
     }
-
 }
