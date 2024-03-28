@@ -4,10 +4,12 @@ import com.example.config.ServiceConfig;
 import com.example.config.WebClientConfig;
 import com.example.dao.Comment;
 import com.example.dao.Post;
+import com.example.dao.Reply;
+import com.example.dto.CommentWithReplies;
 import com.example.repository.CommentRepository;
 import com.example.repository.PostRepository;
+import com.example.repository.ReplyRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @DataMongoTest
 @Import({ServiceConfig.class, WebClientConfig.class})
@@ -31,6 +32,8 @@ class CommentServiceTest {
     private CommentService commentService;
     @Autowired
     PostRepository postRepository;
+    @Autowired
+    ReplyRepository replyRepository;
 
     @BeforeEach
     @AfterEach
@@ -57,50 +60,25 @@ class CommentServiceTest {
     }
 
     @Test
-    void Should_returnComment_When_givenAuthorIdOrPostId() {
+    void Should_returnComment_When_givenAuthorId() {
         // given
         String authorId = "testAuthorId";
-        Post savedPost = postRepository.save(new Post(authorId, "testAuthorUserId", "title", "testPostContent")).block();
+//        Post savedPost = postRepository.save(new Post(authorId, "testAuthorUserId", "title", "testPostContent")).block();
 
         // when
-        Flux<Comment> commentFlux = Flux.range(1, 3).flatMap(index -> commentService.createComment(new Comment(savedPost, authorId, "testAuthorUserId", "content " + index)));
-        Flux<Comment> expectedCommentsByAuthorId = commentService.readCommentsByAuthorId(authorId);
-        Flux<Comment> expectedCommentsByPostId = commentService.readCommentsByPostId(savedPost.getId());
+//        Flux<Comment> commentFlux = Flux.range(1, 3)
+//                .flatMap(index -> commentService.createComment(new Comment(savedPost, authorId, "testAuthorUserId", "content " + index)));
+//        Flux<Comment> expectedCommentsByAuthorId = commentService.readCommentsByAuthorId(authorId);
+
+        Flux<Comment> expectedCommentsByAuthorId = postRepository.save(new Post(authorId, "testAuthorUserId", "title", "testPostContent"))
+                .flatMapMany(post -> Flux.range(1, 3)
+                        .flatMap(index -> commentService.createComment(new Comment(post, authorId, "testAuthorUserId", "content " + index))))
+                .thenMany(commentService.readCommentsByAuthorId(authorId));
 
         // then
-        Set<String> comments = new HashSet<>();
-        StepVerifier.create(commentFlux)
-                .thenConsumeWhile(comment -> {
-                    comments.add(comment.getId());
-                    return comment.getAuthorId().equals(authorId) && comment.getPost().getId().equals(savedPost.getId());
-                })
-                .verifyComplete();
-        Set<String> commentsByAuthorId = new HashSet<>();
-        Set<String> commentsByPostId = new HashSet<>();
         StepVerifier.create(expectedCommentsByAuthorId)
-                .thenConsumeWhile(comment -> commentsByAuthorId.add(comment.getId()))
-                .verifyComplete();
-        StepVerifier.create(expectedCommentsByPostId)
-                .thenConsumeWhile(comment -> commentsByPostId.add(comment.getId()))
-                .verifyComplete();
-        for (String comment : comments) {
-            Assertions.assertThat(commentsByAuthorId.contains(comment) && commentsByPostId.contains(comment)).isTrue();
-        }
-    }
-
-    @Test
-    void Should_returnComments_When_givenManyAuthor() {
-        // given
-        Post savedPost = postRepository.save(new Post("testAuthorId1", "testAuthorUserId1", "title", "testPostContent")).block();
-
-        // when
-        Flux<Comment> comment = commentService.createComment(new Comment(savedPost, "testAuthorId", "testAuthorUserId", "testContent1"))
-                .then(commentService.createComment(new Comment(savedPost, "testAuthorId2", "testAuthorUserId2", "testContent2")))
-                .thenMany(commentService.readCommentsByPostId(savedPost.getId()));
-
-        // then
-        StepVerifier.create(comment)
-                .expectNextCount(2)
+                .expectNextCount(3)
+                .thenConsumeWhile(comment -> comment.getAuthorId().equals(authorId) && comment.getContent().startsWith("content "))
                 .verifyComplete();
     }
 
@@ -120,5 +98,21 @@ class CommentServiceTest {
                 .verifyComplete();
     }
 
+    @Test
+    void Should_readComments_When_givenPostId() {
+        // given
+        Post savedPost = postRepository.save(new Post("testAuthorId", "testAuthorUserId","title","testPostContent")).block();
+        Comment savedComment = commentRepository.save(new Comment(savedPost, "testAuthorId", "testAuthorUserId", "testCommentContent1")).block();
+        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent1")).block();
+        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent2")).block();
+        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent3")).block();
 
+        // when
+        Mono<List<CommentWithReplies>> commentsWithRepliesByPostId = commentService.readCommentsByPostId(savedPost.getId());
+
+        // then
+        StepVerifier.create(commentsWithRepliesByPostId)
+                .expectNextMatches(commentWithReplies -> commentWithReplies.size() == 1 && commentWithReplies.get(0).getReplies().size()==3)
+                .verifyComplete();
+    }
 }

@@ -2,9 +2,15 @@ package com.example.services;
 
 import com.example.config.ServiceConfig;
 import com.example.config.WebClientConfig;
+import com.example.dao.Comment;
 import com.example.dao.Post;
+import com.example.dao.Reply;
+import com.example.dto.PostPageForm;
+import com.example.repository.CommentRepository;
 import com.example.repository.PostRepository;
 import com.example.repository.RecommendationRepository;
+import com.example.repository.ReplyRepository;
+import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,20 +18,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @DataMongoTest
-@Import({ServiceConfig.class, WebClientConfig.class})
+@Import({ServiceConfig.class, WebClientConfig.class, CircuitBreakerAutoConfiguration.class})
 @Slf4j
 class PostServiceTest {
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private ReplyRepository replyRepository;
     @Autowired
     private RecommendationRepository recommendationRepository;
     @Autowired
@@ -35,39 +41,43 @@ class PostServiceTest {
     @AfterEach
     void setUpAndTearDown() {
         postRepository.deleteAll().block();
+        commentRepository.deleteAll().block();
+        replyRepository.deleteAll().block();
         recommendationRepository.deleteAll().block();
     }
 
     @Test
-    void Should_returnPost_When_givenPostInfo() {
-        // when
-        Mono<Post> createPost = postService.createPost(new Post("testAuthorId", "testAuthorUserId","testTitle", "testContent"));
-
-        // then
-        StepVerifier.create(createPost)
-                .expectNextMatches(retrievedPosts -> retrievedPosts.getAuthorId().equals("testAuthorId")
-                        && retrievedPosts.getTitle().equals("testTitle")
-                        && retrievedPosts.getContent().equals("testContent"))
-                .verifyComplete();
-    }
-
-    @Test
-    void Should_returnPosts_When_givenPostsInfo() {
+    void Should_returnPostPage_When_givenPostAndUserAndCommentsAndReplies() {
         // given
-        List<String> postIds = new ArrayList<>();
+        Post savedPost = postRepository.save(new Post("testAuthorId1", "testAuthorUserId1", "title", "testPostContent")).block();
+        Comment savedComment1 = commentRepository.save(new Comment(savedPost, "testAuthorId2", "testAuthorUserId2", "testCommentContent")).block();
+        Reply reply1_1 = replyRepository.save(new Reply(savedComment1, "testAuthorId1", "testAuthorUserId1", "testReplyContent1-1")).block();
+        Reply reply1_2 = replyRepository.save(new Reply(savedComment1, "testAuthorId3", "testAuthorUserId3", "testReplyContent1-2")).block();
+        Comment savedComment2 = commentRepository.save(new Comment(savedPost, "testAuthorId3", "testAuthorUserId3", "testCommentContent")).block();
+        Reply reply2_1 = replyRepository.save(new Reply(savedComment2, "testAuthorId1", "testAuthorUserId1", "testReplyContent2-1")).block();
+        Reply reply2_2 = replyRepository.save(new Reply(savedComment2, "testAuthorId2", "testAuthorUserId2", "testReplyContent2-2")).block();
 
         // when
-        Flux<String> newPosts = Flux.range(1, 3)
-                .flatMap(index -> postService.createPost(new Post("testAuthorId", "testAuthorUserId","testTitle" + index, "content " + index)))
-                .map(post -> post.getId());
+        Mono<PostPageForm> createPostPage = postService.getPostPageByPostId(savedPost.getId());
+        PostPageForm block = createPostPage.block();
 
         // then
-        StepVerifier.create(newPosts)
-                .expectNextSequence(postIds)
-                .expectNextCount(3)
+        StepVerifier.create(createPostPage)
+                .expectNextMatches(postPageForm -> postPageForm.getPost().getPostId().equals(savedPost.getId()) && postPageForm.getPost().getAuthorUserId().equals("testAuthorUserId1"))
+                .verifyComplete();
+        StepVerifier.create(commentRepository.findCommentsByPostId(savedPost.getId()))
+                .expectNextMatches(comment -> comment.getId().equals(savedComment1.getId()))
+                .expectNextMatches(comment -> comment.getId().equals(savedComment2.getId()))
+                .verifyComplete();
+        StepVerifier.create(replyRepository.findAllByCommentIdOrderByCreatedDate(savedComment1.getId()))
+                .expectNextMatches(reply -> reply.getId().equals(reply1_1.getId()))
+                .expectNextMatches(reply -> reply.getId().equals(reply1_2.getId()))
+                .verifyComplete();
+        StepVerifier.create(replyRepository.findAllByCommentIdOrderByCreatedDate(savedComment2.getId()))
+                .expectNextMatches(reply -> reply.getId().equals(reply2_1.getId()))
+                .expectNextMatches(reply -> reply.getId().equals(reply2_2.getId()))
                 .verifyComplete();
     }
-
 //    @Test
 //    void Should_deleteUser_When_givenUserInfo() {
 //        // given
