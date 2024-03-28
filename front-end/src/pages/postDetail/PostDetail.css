@@ -24,3 +24,19 @@
     margin: 10px 0;
     width: 70%;
 }
+
+.reply-container {
+    border-left: 2px solid #ccc;
+}
+
+.textarea-area{
+    position: relative;
+}
+.textarea {
+    width: 100%;
+}
+.textarea-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

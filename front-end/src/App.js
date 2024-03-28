@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Navbar from'./components/Navbar';
 import PostsTable from "./pages/PostsTable";
@@ -9,17 +9,18 @@ import SignUp from "./pages/login/SignUp";
 import SearchTable from "./pages/SearchTable";
 
 function App() {
-  return (
+    const [loggedIn, setLoggedIn] = useState(false);
+    return (
       <>
         <Router>
-          <Navbar/>
+          <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
           <Routes>
-            <Route exact path='/' element={<PostsTable />}/>
-            <Route path='/search/:keyword' element={<SearchTable />}/>
-            <Route path='/post/id/:postId' element={<PostDetail/>}/>
-            <Route path='/post' element={<MakingPost/>}/>
-            <Route path='/login' element={<SignIn/>}/>
-            <Route path='/signUp' element={<SignUp/>}/>
+            <Route exact path='/' element={<PostsTable setLoggedIn={setLoggedIn}/>}/>
+            <Route path='/search/:keyword' element={<SearchTable setLoggedIn={setLoggedIn}/>}/>
+            <Route path='/post/id/:postId' element={<PostDetail setLoggedIn={setLoggedIn}/>}/>
+            <Route path='/post' element={<MakingPost setLoggedIn={setLoggedIn}/>}/>
+            <Route path='/login' element={<SignIn />}/>
+            <Route path='/signUp' element={<SignUp />}/>
           </Routes>
         </Router>
       </>

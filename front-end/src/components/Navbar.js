@@ -4,7 +4,7 @@ import {Button} from './Button';
 import './Navbar.css';
 import {httpClientForCredentials} from "../index";
 
-function Navbar() {
+function Navbar({loggedIn,setLoggedIn}) {
     const [click, setClick] = useState(false);
     const [button, setButton] = useState(true);
 
@@ -22,10 +22,20 @@ function Navbar() {
         }
     };
 
+    const logout = async () => {
+        await httpClientForCredentials.get(`/api/user/logout`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        setLoggedIn(false);
+        window.location.replace('/');
+    };
+
     // SIGNUP버튼이 사이즈가 줄어들면 없어지도록 한다.
     useEffect(() => {
         showButton();
-    }, []);
+    }, [loggedIn]);
 
 
     window.addEventListener('resize', showButton);
@@ -64,7 +74,7 @@ function Navbar() {
                         {/*    </Link>*/}
                         {/*</li>*/}
                     </ul>
-                    {button && <Button buttonStyle='btn--outline'>SIGN UP</Button>}
+                    {button && (loggedIn ? <button className="btn btn--outline btn--medium" onClick={logout}>Logout</button> : <Link to="/login"><button className="btn btn-mobile btn--outline btn--medium">Login</button></Link>)}
                 </div>
             </nav>
 

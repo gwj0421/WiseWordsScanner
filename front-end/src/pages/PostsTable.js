@@ -7,13 +7,14 @@ import CommonTableRow from '../components/table/CommonTableRow';
 import {Link, useLocation} from "react-router-dom";
 import PostDetailHeader from "./postDetail/PostDetailHeader";
 import {httpClientForCredentials} from "../index";
+import checkAuth from "./function/checkAuth";
+import checkAuthForUnknown from "./function/checkAuthByUnknown";
 
-const PostsTable = () => {
+const PostsTable = ({setLoggedIn}) => {
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-
     const fetchPosts = async () => {
         try {
             const response = await httpClientForCredentials.get(`/api/post/page?page=${currentPage}&size=${pageSize}`, {
@@ -30,10 +31,10 @@ const PostsTable = () => {
         }
     };
 
-
     useEffect(() => {
+        checkAuthForUnknown(setLoggedIn);
         fetchPosts();
-    }, [currentPage,pageSize]); // 페이지 번호나 페이지 크기가 바뀔 때마다 이를 조정하여 호출할 수 있습니다.
+    }, [currentPage, pageSize]); // 페이지 번호나 페이지 크기가 바뀔 때마다 이를 조정하여 호출할 수 있습니다.
 
 
     const goToPage = (pageNumber) => {
@@ -51,14 +52,6 @@ const PostsTable = () => {
         }
     };
 
-    const logout = async () => {
-        await httpClientForCredentials.get(`/api/user/logout`, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    };
-
     return (
         <div>
             <div>
@@ -69,7 +62,7 @@ const PostsTable = () => {
                             <CommonTableColumn>{currentPage * pageSize + index + 1}</CommonTableColumn>
                             <CommonTableColumn>
                                 <Link to={`/post/id/${post.postId}`}>
-                                    {post.title}
+                                    {post.title.length > 15 ? post.title.substring(0,16)+"...":post.title}
                                 </Link>
                             </CommonTableColumn>
                             <CommonTableColumn>{post.createdDate}</CommonTableColumn>
@@ -92,9 +85,9 @@ const PostsTable = () => {
             <Link to={'/login'}>
                 Login
             </Link>
-            <button onClick={() => logout()}>
-                Logout
-            </button>
+            {/*<button onClick={() => logout()}>*/}
+            {/*    Logout*/}
+            {/*</button>*/}
         </div>
     );
 };

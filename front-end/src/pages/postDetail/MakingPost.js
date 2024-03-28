@@ -3,7 +3,7 @@ import {httpClientForCredentials} from "../../index";
 import {useNavigate} from "react-router-dom";
 
 import './MakingPost.css';
-import checkAuth from "../function/authUtils";
+import checkAuth from "../function/checkAuth";
 
 // function GetCategory() {
 //     const [category, setCategory] = useState({});
@@ -73,25 +73,64 @@ import checkAuth from "../function/authUtils";
 // }
 
 const HandleQuestionSubmit = async (body, navigate) => {
-    await httpClientForCredentials.post('/api/post',body,{
+    if (body.title.length < 1 || body.content.length < 1) {
+        alert("제목 혹은 내용의 최소 길이는 1 이상입니다.")
+        return;
+    }
+    await httpClientForCredentials.post('/api/post', body, {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then((response) => navigate(`/post/id/${response.data.postId}`,{replace:true}));
+    }).then((response) => navigate(`/post/id/${response.data.postId}`, {replace: true}));
 };
 
-function MakingPost() {
+function MakingPost({setLoggedIn}) {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-
     const body = {
         title: title,
         content: content
     };
+    const [images, setImages] = useState([]);
+    const [previewImages, setPreviewImages] = useState([]);
+    const [ocrResult, setOcrResult] = useState('');
+
+    // 이미지가 변경될 때 호출되는 함수
+    const handleImageChange = (event) => {
+        const selectedImages = event.target.files;
+        setImages(selectedImages);
+
+        const previewImagesArray = [];
+        for (let i = 0; i < selectedImages.length; i++) {
+            const imageURL = URL.createObjectURL(selectedImages[i]);
+            previewImagesArray.push(imageURL);
+        }
+        setPreviewImages(previewImagesArray);
+    };
+
+    // 이미지 업로드 요청을 보내는 함수
+    const handleImageUpload = async () => {
+        if (images.length === 0) {
+            console.error('No images selected');
+            return;
+        }
+
+        const formData = new FormData();
+        // formData.append('images', images);
+        for (let i = 0; i < images.length; i++) {
+            formData.append('images', images[i]);
+        }
+        const response = await httpClientForCredentials.post('/api/ocr', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        setOcrResult(response.data);
+    };
 
     useEffect(() => {
-        checkAuth();
+        checkAuth(setLoggedIn);
     },[]);
 
     return (
@@ -100,11 +139,22 @@ function MakingPost() {
             <div className="post-detail-view-wrapper">
                 <div className="post-detail-view-row">
                     <label>제목</label>
-                    <input onChange={(event) => setTitle(event.target.value)}></input>
+                    <input onChange={(event) => setTitle(event.target.value)} maxLength={16}></input>
                 </div>
                 <div className="post-detail-view-row">
                     <label>내용</label>
-                    <textarea onChange={(event) => setContent(event.target.value)}></textarea>
+                    <textarea onChange={(event) => setContent(event.target.value)} maxLength={512}></textarea>
+                </div>
+                <div className="post-detail-view-row">
+                    <label>이미지 추출 내용</label>
+                    <textarea value={ocrResult} onChange={(event) => setOcrResult(event.target.value)}></textarea>
+                </div>
+                <div>
+                    <input type="file" multiple onChange={handleImageChange} />
+                    {previewImages.map((imageURL, index) => (
+                        <img key={index} src={imageURL} alt={`Preview ${index}`} style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px' }} />
+                    ))}
+                    <button onClick={handleImageUpload}>Upload Images</button>
                 </div>
                 <div>
                     <button onClick={() => HandleQuestionSubmit(body, navigate)}>등록</button>

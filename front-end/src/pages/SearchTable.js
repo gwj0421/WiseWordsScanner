@@ -6,8 +6,9 @@ import CommonTableRow from '../components/table/CommonTableRow';
 import {Link, useLocation, useParams} from "react-router-dom";
 import PostDetailHeader from "./postDetail/PostDetailHeader";
 import {httpClientForCredentials} from "../index";
+import checkAuthByUnknown from "./function/checkAuthByUnknown";
 
-const SearchTable = () => {
+const SearchTable = ({setLoggedIn}) => {
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
@@ -28,6 +29,7 @@ const SearchTable = () => {
 
 
     useEffect(() => {
+        checkAuthByUnknown(setLoggedIn);
         fetchPosts();
     }, [keyword,currentPage,pageSize]); // 페이지 번호나 페이지 크기가 바뀔 때마다 이를 조정하여 호출할 수 있습니다.
 
