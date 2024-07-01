@@ -1,15 +1,16 @@
 package com.example.dao;
 
+import com.example.config.RecommendType;
 import com.example.dto.DateInfo;
 import com.example.dto.Recommendable;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Document(collection = "post")
 @Getter
@@ -21,7 +22,7 @@ public class Post extends DateInfo implements Recommendable {
     private String title;
     private String content;
     private long visitCnt;
-    private Map<String, List<String>> recommendUserIds;
+    private Map<RecommendType, Set<String>> recommendWithNotRecommendUserIds;
 
     public Post(String authorId, String authorUserId,String title, String content) {
         this.authorId = authorId;
@@ -29,7 +30,7 @@ public class Post extends DateInfo implements Recommendable {
         this.title = title;
         this.content = content;
         this.visitCnt = 0;
-        this.recommendUserIds = new HashMap<>(Map.of("recommend", new ArrayList<>(), "unRecommend", new ArrayList<>()));
+        this.recommendWithNotRecommendUserIds = new HashMap<>(Map.of(RecommendType.RECOMMEND, new HashSet<>(), RecommendType.NOT_RECOMMEND, new HashSet<>()));
     }
 
     public void changeContent(String content) {
@@ -38,5 +39,15 @@ public class Post extends DateInfo implements Recommendable {
 
     public void visitPost() {
         this.visitCnt++;
+    }
+
+    @Override
+    public Set<String> getNotRecommendUserIds() {
+        return recommendWithNotRecommendUserIds.get(RecommendType.NOT_RECOMMEND);
+    }
+
+    @Override
+    public Set<String> getRecommendUserIds() {
+        return recommendWithNotRecommendUserIds.get(RecommendType.RECOMMEND);
     }
 }

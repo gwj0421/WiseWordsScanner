@@ -8,9 +8,12 @@ import reactor.core.publisher.Mono;
 
 public interface ReplyService {
     Mono<Reply> createReply(Reply reply);
-    Mono<ReplyForm> createReply(ServerHttpRequest request, ReplyForm replyForm);
+
+    Mono<String> createReply(ServerHttpRequest request, ReplyForm replyForm);
+
     Mono<Reply> readReplyById(String id);
-    Flux<Reply> readReplyByCommentId(String commentId);
-    Mono<Void> recommend(String replyId, String recommenderId, boolean userRecommend);
+
+    Flux<ReplyForm> readReplyByCommentId(String commentId,String authorId);
+
     Mono<Void> deleteReplyById(String id);
 }

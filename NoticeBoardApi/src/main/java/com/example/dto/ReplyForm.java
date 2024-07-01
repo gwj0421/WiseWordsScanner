@@ -12,6 +12,8 @@ public class ReplyForm {
     private String commentId;
     private String replyId;
     private String replyContent;
+    private int recommendCnt;
+    private boolean isRecommend;
 
     @JsonCreator
     public ReplyForm(String commentId, String replyContent) {
@@ -19,13 +21,15 @@ public class ReplyForm {
         this.replyContent = replyContent;
     }
 
-    private ReplyForm(String authorUserId, String replyId, String replyContent) {
+    private ReplyForm(String authorUserId, String replyId, String replyContent, int recommendCnt,boolean isRecommend) {
         this.authorUserId = authorUserId;
         this.replyId = replyId;
         this.replyContent = replyContent;
+        this.recommendCnt = recommendCnt;
+        this.isRecommend = isRecommend;
     }
 
-    public static ReplyForm getReplyFormToShowDetail(Reply reply) {
-        return new ReplyForm(reply.getAuthorUserId(), reply.getId(), reply.getReplyContent());
+    public static ReplyForm getReplyFormToShowDetail(Reply reply,String authorId) {
+        return new ReplyForm(reply.getAuthorUserId(), reply.getId(), reply.getReplyContent(), reply.getRecommendUserIds().size(), reply.getRecommendUserIds().contains(authorId));
     }
 }

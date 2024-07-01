@@ -46,7 +46,7 @@ function Navbar({loggedIn,setLoggedIn}) {
                 <div className = 'navbar-container'>
                     {/* 모바일버전에서 클릭하면 메뉴 보이도록 설정하는 것도 한다. (close Mobile Menu)는 다시 버튼 누르면 없어지고 생기고 하도록 한다.  */}
                     <Link to='/' className='navbar-logo' onClick={closeMobileMenu}>
-                        gunwoong-react-practice
+                        현명한 사람들
                         <i className='fab fa-typo3' />
                     </Link>
                     <div className='menu-icon' onClick={handleClick}>
@@ -59,13 +59,8 @@ function Navbar({loggedIn,setLoggedIn}) {
                             </Link>
                         </li>
                         <li className='nav-item'>
-                            <Link to='/Temp1' className='nav-links' onClick = {closeMobileMenu}>
-                                Temp1
-                            </Link>
-                        </li>
-                        <li className='nav-item'>
-                            <Link to='/Temp2' className='nav-links' onClick = {closeMobileMenu}>
-                                Temp2
+                            <Link to='/post' className='nav-links' onClick = {closeMobileMenu}>
+                                게시물 작성
                             </Link>
                         </li>
                         {/*<li className='nav-item'>*/}

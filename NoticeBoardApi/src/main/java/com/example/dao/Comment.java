@@ -7,10 +7,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Document(collection = "comment")
 @Getter
@@ -22,13 +21,23 @@ public class Comment extends DateInfo implements Recommendable {
     private String authorId;
     private String authorUserId;
     private String content;
-    private Map<String, List<String>> recommendUserIds;
+    private Set<String> recommend;
 
-    public Comment(Post post,String authorId,String authorUserId, String content) {
+    public Comment(Post post, String authorId, String authorUserId, String content) {
         this.post = post;
         this.authorId = authorId;
         this.authorUserId = authorUserId;
         this.content = content;
-        this.recommendUserIds = new HashMap<>(Map.of("recommend", new ArrayList<>(), "unRecommend", new ArrayList<>()));
+        this.recommend = new HashSet<>();
+    }
+
+    @Override
+    public Set<String> getNotRecommendUserIds() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<String> getRecommendUserIds() {
+        return recommend;
     }
 }

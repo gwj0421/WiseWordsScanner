@@ -11,11 +11,14 @@ import java.util.List;
 
 public interface CommentService {
     Mono<Comment> createComment(Comment comment);
-    Mono<CommentForm> createComment(ServerHttpRequest request,CommentForm commentForm);
-    Mono<Comment> readCommentById(String id);
-    Flux<Comment> readCommentsByAuthorId(String id);
-    Mono<List<CommentWithReplies>> readCommentsByPostId(String postId);
 
-    Mono<Void> recommend(String commentId, String recommenderId, boolean userRecommend);
+    Mono<String> createComment(ServerHttpRequest request, CommentForm commentForm);
+
+    Mono<Comment> readCommentById(String id);
+
+    Flux<Comment> readCommentsByAuthorId(String id);
+
+    Mono<List<CommentWithReplies>> readCommentsByPostId(String postId, String authorId);
+
     Mono<Void> deleteCommentById(String id);
 }

@@ -23,17 +23,17 @@ public class ServiceConfig {
 
     @Bean
     public PostService postService() {
-        return new PostServiceImpl(commentService(),replyService(),loadBalancedWebClientBuilder,postRepository,recommendService(),formConverter(),deleteService(),circuitBreakerFactory);
+        return new PostServiceImpl(commentService(),loadBalancedWebClientBuilder,postRepository,formConverter(),deleteService(),circuitBreakerFactory);
     }
 
     @Bean
     public CommentService commentService() {
-        return new CommentServiceImpl(commentRepository,replyService(),recommendService(),formConverter(),deleteService());
+        return new CommentServiceImpl(commentRepository,replyService(),formConverter(),deleteService());
     }
 
     @Bean
     public ReplyService replyService() {
-        return new ReplyServiceImpl(replyRepository,recommendService(),formConverter(),deleteService());
+        return new ReplyServiceImpl(replyRepository,formConverter(),deleteService());
     }
 
     @Bean
@@ -43,7 +43,7 @@ public class ServiceConfig {
 
     @Bean
     public RecommendService recommendService() {
-        return new RecommendServiceImpl(recommendationRepository);
+        return new RecommendServiceImpl(recommendationRepository,postRepository,commentRepository,replyRepository);
     }
 
     @Bean

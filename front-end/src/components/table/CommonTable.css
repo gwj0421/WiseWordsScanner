@@ -14,10 +14,16 @@
 }
 
 .common-table-row:hover {
-    background-color: #eceaea;
+    /*background-color: #eceaea;*/
     cursor: pointer;
 }
 
 .common-table-column {
     padding: 10px 5px;
+}
+
+.post-link {
+    color: white;
+    text-decoration: none;
+    text-decoration-color: white;
 }

@@ -1,6 +1,63 @@
+.post-detail-header {
+    width: 80%;
+    /*display: flex; !* Flexbox 사용 *!*/
+    /*align-items: center; !* 세로 중앙 정렬 *!*/
+    /*justify-content: space-between; !* 왼쪽과 오른쪽 정렬 *!*/
+    margin: 20px auto;
+}
+.post-detail-header-title {
+    color: white; /* 텍스트 색상 설정 */
+    font-size: 26px;
+    margin: 2px auto;
+    padding: 3px;
+    background-color: #333333; /* 배경색 설정 */
+    border-top: 1px solid #999999;
+
+}
+
+.post-detail-header-meta-status {
+    display: flex; /* Flexbox 사용 */
+    justify-content: space-between;
+    color: white; /* 텍스트 색상 설정 */
+    padding: 2px 5px;
+    border-top: 1px solid #999999;
+    border-bottom: 1px solid #999999;
+
+}
+
+.post-detail-header-meta-status-left {
+    align-self: flex-start;
+}
+
+.post-detail-header-meta-status-right {
+    align-self: flex-end;
+}
+
+.post-detail-header-meta-status-right-recommend-cnt {
+    text-decoration-color: #0056b3;
+}
+
+.post-detail-header-meta-status-right-not-recommend-cnt {
+    text-decoration-color: #0056b3;
+}
+
 .post-detail-view-wrapper {
-    width: 60%;
+    width: 80%;
     margin: 0 auto;
+}
+
+.post-detail-view-vote-area{
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+}
+.post-detail-view-recommend-btn{
+    padding: 10px 20px;
+    color: white; /* 초기 글자색 */
+    border-radius: 10px; /* 버튼 외각선 둥글게 */
+    border: solid;
+    cursor: pointer;
+    margin: 0 5px; /* 버튼 사이의 간격 조정 */
 }
 
 .post-detail-view-go-list-btn {
@@ -25,10 +82,6 @@
     width: 70%;
 }
 
-.reply-container {
-    border-left: 2px solid #ccc;
-}
-
 .textarea-area{
     position: relative;
 }
@@ -39,4 +92,46 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    padding: 10px 20px;
+    background-color: #222222; /* 초기 배경색 */
+    color: white; /* 초기 글자색 */
+    border-radius: 10px; /* 버튼 외각선 둥글게 */
+    border: solid;
+    cursor: pointer;
+}
+
+.comment-container {
+    margin: 20px auto;
+}
+.reply-container {
+    margin-left: 30px;
+    margin-top: 20px;
+    /*margin: 20px 30px;*/
+}
+
+.comment-header,
+.reply-header{
+    display: flex;
+    color: white; /* 텍스트 색상 설정 */
+    margin: 2px auto;
+    padding: 3px;
+    background-color: #333333; /* 배경색 설정 */
+    border-top: 1px solid #999999;
+    border-bottom: 1px dashed #999999 ;
+}
+
+.comment-header-author,
+.reply-header-author{
+    align-self: flex-start;
+}
+.comment-header-timeline,
+.reply-header-timeline{
+    align-self: flex-end;
+}
+
+.comment-content {
+
+}
+.reply-content {
+
 }

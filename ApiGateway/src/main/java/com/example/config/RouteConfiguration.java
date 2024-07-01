@@ -47,7 +47,6 @@ public class RouteConfiguration {
                         .uri(USER_MANAGE_API_URI))
                 .route("recommend", p -> p
                         .path("/api/reco/**")
-                        .and().method("GET")
                         .filters(r -> r.rewritePath("/api/reco/(?<path>.*)", "/reco/$\\{path}")
                                 .filter(sessionAuthenticationGatewayFilterFactory.apply(new SessionAuthenticationGatewayFilterFactory.Config(BASIC_AUTHORIZATION_ROLE))))
                         .uri(NOTICE_BOARD_API_URI))

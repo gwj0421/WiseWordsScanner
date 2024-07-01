@@ -4,17 +4,14 @@ import com.example.dao.Post;
 import com.example.dto.PageablePostsResponse;
 import com.example.dto.PostForm;
 import com.example.dto.PostPageForm;
-import com.example.dto.TargetType;
-import com.example.exception.error.AuthorizationException;
-import com.example.exception.error.NoticeBoardApiError;
-import com.example.exception.error.SiteUserApiServerException;
+import com.example.exception.error.EmptyPostIdException;
 import com.example.repository.PostRepository;
+import com.example.utils.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,49 +22,29 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class PostServiceImpl implements PostService {
-    public static final String UID_KEY = "Uid";
-    private static final TargetType POST_TARGET_TYPE = TargetType.POST;
     private final CommentService commentService;
-    private final ReplyService replyService;
     private final WebClient.Builder loadBalancedWebClientBuilder;
     private final PostRepository postRepository;
-    private final RecommendService recommendService;
     private final FormConverter formConverter;
     private final DeleteService deleteService;
     private final ReactiveCircuitBreakerFactory reactiveCircuitBreakerFactory;
 
     @Override
-    public Mono<PostForm> createPost(PostForm postForm, ServerHttpRequest request) {
-        if (!request.getCookies().get(UID_KEY).isEmpty()) {
-            String authorId = request.getCookies().get(UID_KEY).get(0).getValue();
-            return formConverter.toPost(postForm, authorId)
-                    .flatMap(postRepository::save)
-                    .map(PostForm::getPostFormToShowDetail);
-        }
-        return Mono.error(new AuthorizationException("createPost"));
+    public Mono<String> createPost(PostForm postForm, ServerHttpRequest request) {
+        String authorId = CookieUtils.getUserId(request);
+        return formConverter.toPost(postForm, authorId)
+                .flatMap(postRepository::save)
+                .map(Post::getId);
     }
 
     @Override
     public Mono<Post> readPostById(String id) {
-        return postRepository.findPostById(id).switchIfEmpty(Mono.empty());
+        return postRepository.findPostById(id).switchIfEmpty(Mono.defer(()-> Mono.error(new EmptyPostIdException("readPostById"))));
     }
 
     @Override
     public Flux<Post> readPostsByAuthorId(String id) {
         return postRepository.findPostsByAuthorId(id);
-    }
-
-    @Override
-    public Mono<String> findAuthorUserIdByAuthorId(String authorId) {
-        return loadBalancedWebClientBuilder.build().get().uri("http://user-manage-api/user/id/" + authorId)
-                .retrieve()
-                .bodyToMono(String.class)
-                .transform(it -> reactiveCircuitBreakerFactory.create("userManageApiCircuitBreaker").run(it,throwable -> Mono.error(new SiteUserApiServerException("findAuthorUserIdByAuthorId"))));
-    }
-
-    @Override
-    public Mono<Void> recommendPost(String postId, String recommenderId, boolean userRecommend) {
-        return recommendService.recommend((ReactiveMongoRepository) postRepository, POST_TARGET_TYPE, postId, recommenderId, userRecommend);
     }
 
     @Override
@@ -95,21 +72,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Mono<PostForm> getPostDetailById(String id) {
-        return postRepository.findPostById(id)
+    public Mono<PostPageForm> getPostPageByPostId(ServerHttpRequest request, String postId) {
+        String authorId = CookieUtils.getUserId(request);
+        return readPostById(postId)
                 .flatMap(post -> {
                     post.visitPost();
                     return postRepository.save(post);
                 })
-                .map(PostForm::getPostFormToShowDetail);
-    }
-
-    @Override
-    public Mono<PostPageForm> getPostPageByPostId(String postId) {
-        return readPostById(postId)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new NoticeBoardApiError("getPostPageByPostId"))))
-                .flatMap(post -> commentService.readCommentsByPostId(post.getId())
-                        .map(commentWithReplies -> new PostPageForm(post, commentWithReplies)));
+                .flatMap(post -> commentService.readCommentsByPostId(post.getId(),authorId)
+                        .map(commentWithReplies -> new PostPageForm(post, commentWithReplies,authorId)));
     }
 
     @Override

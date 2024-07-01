@@ -81,7 +81,7 @@ const HandleQuestionSubmit = async (body, navigate) => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then((response) => navigate(`/post/id/${response.data.postId}`, {replace: true}));
+    }).then((response) => navigate(`/post/id/${response.data}`, {replace: true}));
 };
 
 function MakingPost({setLoggedIn}) {
@@ -131,33 +131,46 @@ function MakingPost({setLoggedIn}) {
 
     useEffect(() => {
         checkAuth(setLoggedIn);
-    },[]);
+    }, []);
 
     return (
         <>
-            <h2 align="center">게시글 상세정보</h2>
-            <div className="post-detail-view-wrapper">
-                <div className="post-detail-view-row">
-                    <label>제목</label>
-                    <input onChange={(event) => setTitle(event.target.value)} maxLength={16}></input>
+            <div className="making-post-view-wrapper">
+                <div className="making-post-header">
+                    <div className="making-post-title">
+                        <input onChange={(event) => setTitle(event.target.value)} maxLength={16}
+                               placeholder="제목"></input>
+                    </div>
                 </div>
-                <div className="post-detail-view-row">
-                    <label>내용</label>
-                    <textarea onChange={(event) => setContent(event.target.value)} maxLength={512}></textarea>
+                <div className="making-post-content">
+                        <textarea onChange={(event) => setContent(event.target.value)} maxLength={512} rows={10}
+                                  placeholder="내용"></textarea>
                 </div>
-                <div className="post-detail-view-row">
-                    <label>이미지 추출 내용</label>
-                    <textarea value={ocrResult} onChange={(event) => setOcrResult(event.target.value)}></textarea>
-                </div>
-                <div>
-                    <input type="file" multiple onChange={handleImageChange} />
-                    {previewImages.map((imageURL, index) => (
-                        <img key={index} src={imageURL} alt={`Preview ${index}`} style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px' }} />
-                    ))}
-                    <button onClick={handleImageUpload}>Upload Images</button>
-                </div>
-                <div>
+                <div className="making-post-send">
                     <button onClick={() => HandleQuestionSubmit(body, navigate)}>등록</button>
+                </div>
+                <div className="making-post-ocr">
+                    <fieldset className="dash-fieldset">
+                        <legend>책 사진에서 텍스트 추출</legend>
+                        <fieldset className="solid-fieldset">
+                            <legend>추출 결과</legend>
+                            <textarea value={ocrResult}
+                                      onChange={(event) => setOcrResult(event.target.value)}
+                                      rows={10}></textarea>
+                        </fieldset>
+                        <div className="input-images">
+                            <input type="file" multiple onChange={handleImageChange}/>
+                        </div>
+                        <div className="show-images">
+                            {previewImages.map((imageURL, index) => (
+                                <img key={index} src={imageURL} alt={`Preview ${index}`}
+                                     style={{maxWidth: '100px', maxHeight: '100px', margin: '5px'}}/>
+                            ))}
+                        </div>
+                        <button onClick={handleImageUpload}>Upload Images</button>
+                    </fieldset>
+
+
                 </div>
             </div>
         </>

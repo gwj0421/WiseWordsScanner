@@ -6,7 +6,6 @@ import com.example.services.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -20,13 +19,13 @@ public class ReplyController {
         return replyService.readReplyById(id);
     }
 
-    @GetMapping("commentId/{commentId}")
-    public Flux<Reply> getReplyByCommentId(@PathVariable String commentId) {
-        return replyService.readReplyByCommentId(commentId);
-    }
+//    @GetMapping("commentId/{commentId}")
+//    public Flux<Reply> getReplyByCommentId(@PathVariable String commentId) {
+//        return replyService.readReplyByCommentId(commentId);
+//    }
 
     @PostMapping()
-    public Mono<ReplyForm> createReply(ServerHttpRequest request, @RequestBody ReplyForm replyForm) {
+    public Mono<String> createReply(ServerHttpRequest request, @RequestBody ReplyForm replyForm) {
         return replyService.createReply(request,replyForm);
     }
 

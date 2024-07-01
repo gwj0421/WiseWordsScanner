@@ -1,4 +1,92 @@
-.voc-question-wrapper {
+.making-post-view-wrapper {
     width: 80%;
-    margin: 0 auto;
+    margin: 40px auto;
+}
+
+.making-post-header, .making-post-content{
+    width: 100%;
+    margin: 20px auto;
+}
+
+.making-post-ocr {
+    width: 100%;
+    margin: 20px auto;
+}
+
+.making-post-header input {
+    width: 100%; /* input 요소를 부모 div의 너비에 맞게 설정 */
+    height: 100%; /* input 요소를 부모 div의 높이에 맞게 설정 */
+    font-size: 30px;
+    color: white;
+    border: 1px solid white;
+    background-color: #333333;
+    text-indent: 10px;
+
+}
+
+.making-post-content textarea {
+    width: 100%; /* input 요소를 부모 div의 너비에 맞게 설정 */
+    height: 100%; /* input 요소를 부모 div의 높이에 맞게 설정 */
+    font-size: 20px;
+    color: white;
+    border: 1px solid white;
+    background-color: #333333;
+    text-indent: 10px;
+
+}
+.making-post-content textarea::placeholder {
+    font-size: 30px;
+}
+
+.making-post-send{
+    display: flex;
+    justify-content: flex-end;
+}
+.making-post-send button {
+    padding: 10px;
+    float: right;
+    color: white;
+    border: 1px solid white;
+    background-color: #222222;
+}
+
+.making-post-ocr textarea {
+    width: 100%; /* input 요소를 부모 div의 너비에 맞게 설정 */
+    height: 100%; /* input 요소를 부모 div의 높이에 맞게 설정 */
+    font-size: 20px;
+    color: white;
+    border: black;
+    background-color: #333333;
+}
+
+.input-images {
+    margin: 10px;
+}
+
+.show-images {
+    margin: 10px;
+}
+
+.making-post-ocr fieldset {
+    position: relative;
+}
+.dash-fieldset {
+    border: 1px dashed;
+}
+.solid-fieldset{
+    border: 1px solid;
+}
+
+.making-post-ocr legend {
+    font-weight: bold; /* 범례 텍스트를 더 굵게 설정 */
+}
+
+.making-post-ocr button {
+    padding: 10px;
+    color: white;
+    border: 1px solid white;
+    background-color: #222222;
+    position: absolute; /* 절대 위치 설정 */
+    bottom: -5px; /* 아래쪽 여백 0으로 설정 */
+    right: -5px; /* 오른쪽 여백 0으로 설정 */
 }

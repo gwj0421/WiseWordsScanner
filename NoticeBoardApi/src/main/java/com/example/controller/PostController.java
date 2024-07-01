@@ -20,8 +20,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/id/{id}")
-    public Mono<PostPageForm> getPostById(@PathVariable String id) {
-        return postService.getPostPageByPostId(id);
+    public Mono<PostPageForm> getPostById(ServerHttpRequest request, @PathVariable String id) {
+        return postService.getPostPageByPostId(request,id);
     }
 
     @GetMapping("userId/{userId}")
@@ -42,7 +42,7 @@ public class PostController {
     }
 
     @PostMapping()
-    public Mono<PostForm> createPost(ServerHttpRequest request, @RequestBody PostForm postForm) {
+    public Mono<String> createPost(ServerHttpRequest request, @RequestBody PostForm postForm) {
         return postService.createPost(postForm, request);
     }
 

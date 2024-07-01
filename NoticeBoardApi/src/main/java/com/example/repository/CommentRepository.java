@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface CommentRepository extends ReactiveMongoRepository<Comment, String> {
     Flux<Comment> findCommentsByAuthorId(String id);
-    Flux<Comment> findCommentsByPostId(String id);
+    Flux<Comment> findCommentsByPostIdOrderByCreatedDate(String id);
     Mono<Void> deleteCommentsByAuthorId(String authorId);
     Mono<Void> deleteCommentsByPostId(String postId);
 }

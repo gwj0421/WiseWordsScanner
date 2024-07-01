@@ -8,13 +8,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler({SiteUserApiServerException.class, EmptyPostIdException.class, AuthorizationException.class, NoticeBoardApiError.class})
+    @ExceptionHandler({SiteUserApiServerException.class, EmptyPostIdException.class, NoticeBoardApiError.class})
     public ResponseEntity<String> handler(Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
     }
 
-    @ExceptionHandler(RecommendException.class)
-    public ResponseEntity<Integer> recommendHandler(Exception exception) {
+    @ExceptionHandler({RecommendException.class,IllegalRecommendableException.class})
+    public ResponseEntity<Integer> recommendHandler() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(0);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<String> authHandler(Exception exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
     }
 }

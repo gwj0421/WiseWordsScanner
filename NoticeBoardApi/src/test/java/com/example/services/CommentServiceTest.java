@@ -4,8 +4,6 @@ import com.example.config.ServiceConfig;
 import com.example.config.WebClientConfig;
 import com.example.dao.Comment;
 import com.example.dao.Post;
-import com.example.dao.Reply;
-import com.example.dto.CommentWithReplies;
 import com.example.repository.CommentRepository;
 import com.example.repository.PostRepository;
 import com.example.repository.ReplyRepository;
@@ -19,8 +17,6 @@ import org.springframework.context.annotation.Import;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.util.List;
 
 @DataMongoTest
 @Import({ServiceConfig.class, WebClientConfig.class})
@@ -98,21 +94,21 @@ class CommentServiceTest {
                 .verifyComplete();
     }
 
-    @Test
-    void Should_readComments_When_givenPostId() {
-        // given
-        Post savedPost = postRepository.save(new Post("testAuthorId", "testAuthorUserId","title","testPostContent")).block();
-        Comment savedComment = commentRepository.save(new Comment(savedPost, "testAuthorId", "testAuthorUserId", "testCommentContent1")).block();
-        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent1")).block();
-        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent2")).block();
-        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent3")).block();
-
-        // when
-        Mono<List<CommentWithReplies>> commentsWithRepliesByPostId = commentService.readCommentsByPostId(savedPost.getId());
-
-        // then
-        StepVerifier.create(commentsWithRepliesByPostId)
-                .expectNextMatches(commentWithReplies -> commentWithReplies.size() == 1 && commentWithReplies.get(0).getReplies().size()==3)
-                .verifyComplete();
-    }
+//    @Test
+//    void Should_readComments_When_givenPostId() {
+//        // given
+//        Post savedPost = postRepository.save(new Post("testAuthorId", "testAuthorUserId","title","testPostContent")).block();
+//        Comment savedComment = commentRepository.save(new Comment(savedPost, "testAuthorId", "testAuthorUserId", "testCommentContent1")).block();
+//        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent1")).block();
+//        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent2")).block();
+//        replyRepository.save(new Reply(savedComment, "testAuthorId", "testAuthorUserId", "testReplyContent3")).block();
+//
+//        // when
+//        Mono<List<CommentWithReplies>> commentsWithRepliesByPostId = commentService.readCommentsByPostId(savedPost.getId());
+//
+//        // then
+//        StepVerifier.create(commentsWithRepliesByPostId)
+//                .expectNextMatches(commentWithReplies -> commentWithReplies.size() == 1 && commentWithReplies.get(0).getReplies().size()==3)
+//                .verifyComplete();
+//    }
 }

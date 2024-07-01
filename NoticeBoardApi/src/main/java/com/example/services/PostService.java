@@ -9,15 +9,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface PostService {
-    Mono<PostForm> createPost(PostForm postForm, ServerHttpRequest request);
+    Mono<String> createPost(PostForm postForm, ServerHttpRequest request);
     Mono<Post> readPostById(String id);
     Flux<Post> readPostsByAuthorId(String userId);
-    Mono<String> findAuthorUserIdByAuthorId(String authorId);
-    Mono<Void> recommendPost(String postId, String recommenderId,boolean userRecommend);
+//    Mono<String> findAuthorUserIdByAuthorId(String authorId);
     Mono<PageablePostsResponse> getPostsByPage(int pageNumber, int pageSize);
     Mono<PageablePostsResponse> getPostsBySearch(String keyword,int page, int size);
-    Mono<PostForm> getPostDetailById(String id);
-    Mono<PostPageForm> getPostPageByPostId(String postId);
+//    Mono<PostForm> getPostDetailById(String id);
+    Mono<PostPageForm> getPostPageByPostId(ServerHttpRequest request,String postId);
     Mono<Void> deletePostById(String id);
     
 }

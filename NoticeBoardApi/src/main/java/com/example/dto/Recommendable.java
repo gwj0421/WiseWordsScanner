@@ -1,8 +1,8 @@
 package com.example.dto;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public interface Recommendable {
-    Map<String, List<String>> getRecommendUserIds();
+    Set<String> getNotRecommendUserIds();
+    Set<String> getRecommendUserIds();
 }

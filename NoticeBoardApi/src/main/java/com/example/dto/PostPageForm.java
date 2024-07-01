@@ -11,8 +11,8 @@ public class PostPageForm {
     private PostForm post;
     private List<CommentWithReplies> comments;
 
-    public PostPageForm(Post post, List<CommentWithReplies> comments) {
-        this.post = PostForm.getPostFormToShowDetail(post);
+    public PostPageForm(Post post, List<CommentWithReplies> comments, String authorId) {
+        this.post = PostForm.getPostFormToShowDetail(post,authorId);
         this.comments = comments;
     }
 }

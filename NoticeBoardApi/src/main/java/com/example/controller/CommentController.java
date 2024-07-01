@@ -2,15 +2,12 @@ package com.example.controller;
 
 import com.example.dao.Comment;
 import com.example.dto.CommentForm;
-import com.example.dto.CommentWithReplies;
 import com.example.services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,13 +25,13 @@ public class CommentController {
         return commentService.readCommentsByAuthorId(userId);
     }
 
-    @GetMapping("postId/{postId}")
-    public Mono<List<CommentWithReplies>> getPostByPostId(@PathVariable String postId) {
-        return commentService.readCommentsByPostId(postId);
-    }
+//    @GetMapping("postId/{postId}")
+//    public Mono<List<CommentWithReplies>> getPostByPostId(@PathVariable String postId) {
+//        return commentService.readCommentsByPostId(postId);
+//    }
 
     @PostMapping()
-    public Mono<CommentForm> createPost(ServerHttpRequest request, @RequestBody CommentForm commentForm) {
+    public Mono<String> createPost(ServerHttpRequest request, @RequestBody CommentForm commentForm) {
         return commentService.createComment(request,commentForm);
     }
 

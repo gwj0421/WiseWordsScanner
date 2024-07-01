@@ -2,11 +2,9 @@ package com.example.services;
 
 import com.example.dao.Reply;
 import com.example.dto.ReplyForm;
-import com.example.dto.TargetType;
-import com.example.exception.error.AuthorizationException;
 import com.example.repository.ReplyRepository;
+import com.example.utils.CookieUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -15,10 +13,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
-    public static final String UID_KEY = "Uid";
-    private static final TargetType REPLY_TARGET_TYPE = TargetType.REPLY;
     private final ReplyRepository replyRepository;
-    private final RecommendService recommendService;
     private final FormConverter formConverter;
     private final DeleteService deleteService;
 
@@ -28,14 +23,11 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public Mono<ReplyForm> createReply(ServerHttpRequest request, ReplyForm replyForm) {
-        if (!request.getCookies().get(UID_KEY).isEmpty()) {
-            String authorId = request.getCookies().get(UID_KEY).get(0).getValue();
-            return formConverter.toReply(replyForm, authorId)
-                    .flatMap(replyRepository::save)
-                    .map(ReplyForm::getReplyFormToShowDetail);
-        }
-        return Mono.error(new AuthorizationException("createReply"));
+    public Mono<String> createReply(ServerHttpRequest request, ReplyForm replyForm) {
+        String authorId = CookieUtils.getUserId(request);
+        return formConverter.toReply(replyForm, authorId)
+                .flatMap(replyRepository::save)
+                .map(Reply::getId);
     }
 
     @Override
@@ -44,13 +36,9 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public Flux<Reply> readReplyByCommentId(String commentId) {
-        return replyRepository.findAllByCommentIdOrderByCreatedDate(commentId);
-    }
-
-    @Override
-    public Mono<Void> recommend(String replyId, String recommenderId, boolean userRecommend) {
-        return recommendService.recommend((ReactiveMongoRepository) replyRepository, REPLY_TARGET_TYPE, replyId, recommenderId, userRecommend);
+    public Flux<ReplyForm> readReplyByCommentId(String commentId,String authorId) {
+        return replyRepository.findAllByCommentIdOrderByCreatedDate(commentId)
+                .map(reply -> ReplyForm.getReplyFormToShowDetail(reply,authorId));
     }
 
     @Override

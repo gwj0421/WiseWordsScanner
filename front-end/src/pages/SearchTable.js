@@ -4,7 +4,7 @@ import CommonTable from '../components/table/CommonTable';
 import CommonTableColumn from '../components/table/CommonTableColumn';
 import CommonTableRow from '../components/table/CommonTableRow';
 import {Link, useLocation, useParams} from "react-router-dom";
-import PostDetailHeader from "./postDetail/PostDetailHeader";
+import PostDetailFooter from "./postDetail/PostDetailFooter";
 import {httpClientForCredentials} from "../index";
 import checkAuthByUnknown from "./function/checkAuthByUnknown";
 
@@ -31,7 +31,7 @@ const SearchTable = ({setLoggedIn}) => {
     useEffect(() => {
         checkAuthByUnknown(setLoggedIn);
         fetchPosts();
-    }, [keyword,currentPage,pageSize]); // 페이지 번호나 페이지 크기가 바뀔 때마다 이를 조정하여 호출할 수 있습니다.
+    }, [keyword, currentPage, pageSize]); // 페이지 번호나 페이지 크기가 바뀔 때마다 이를 조정하여 호출할 수 있습니다.
 
 
     const goToPage = (pageNumber) => {
@@ -60,7 +60,6 @@ const SearchTable = ({setLoggedIn}) => {
     return (
         <div>
             <div>
-                <PostDetailHeader></PostDetailHeader>
                 <CommonTable headersName={['글번호', '제목', '등록일', '작성자', '추천수']}>
                     {posts.map((post, index) => (
                         <CommonTableRow key={post.postId}>
@@ -76,22 +75,28 @@ const SearchTable = ({setLoggedIn}) => {
                         </CommonTableRow>
                     ))}
                 </CommonTable>
+                <PostDetailFooter
+                    nextPage={nextPage}
+                    prevPage={prevPage}
+                    goToPage={goToPage}
+                    totalPages={totalPages}
+                />
             </div>
-            <button onClick={() => prevPage()}>Previous</button>
-            {Array.from({length: totalPages}, (_, index) => (
-                <button key={index} onClick={() => goToPage(index)}>
-                    {index + 1}
-                </button>
-            ))}
-            <button onClick={() => nextPage()}>
-                Next
-            </button>
-            <Link to={'/login'}>
-                Login
-            </Link>
-            <button onClick={() => logout()}>
-                Logout
-            </button>
+            {/*<button onClick={() => prevPage()}>Previous</button>*/}
+            {/*{Array.from({length: totalPages}, (_, index) => (*/}
+            {/*    <button key={index} onClick={() => goToPage(index)}>*/}
+            {/*        {index + 1}*/}
+            {/*    </button>*/}
+            {/*))}*/}
+            {/*<button onClick={() => nextPage()}>*/}
+            {/*    Next*/}
+            {/*</button>*/}
+            {/*<Link to={'/login'}>*/}
+            {/*    Login*/}
+            {/*</Link>*/}
+            {/*<button onClick={() => logout()}>*/}
+            {/*    Logout*/}
+            {/*</button>*/}
         </div>
     );
 };
